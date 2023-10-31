@@ -13,5 +13,9 @@ namespace TakeAQuiz.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<GameModel> Games { get; set; }
+        public DbSet<QuestionModel> Questions { get; set; }
+        public DbSet<QuizModel> Quizzes { get; set; }
     }
 }
