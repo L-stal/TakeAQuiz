@@ -1,0 +1,144 @@
+# ASP.NET Blazor
+
+# Binaries
+bin/
+obj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Visual Studio Code directories
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.rsuser.lock
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Visual Studio directories
+.vs2015/
+.vs2017/
+.vs2019/
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.rsuser.lock
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Visual Studio Code directories
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Rider Auto Generated Files
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/vim.xml
+.idea/workspace.xml
+.idea/tasks.xml
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Rider Auto Generated Files
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/vim.xml
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Rider-specific files
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# .NET Scaffolding
+ScaffoldingReadMe.txt
