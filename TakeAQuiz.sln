@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakeAQuiz.Server", "TakeAQuiz\Server\TakeAQuiz.Server.csproj", "{A5B66C51-9DBB-4769-B4D7-F865A671AF64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeAQuiz.Server", "TakeAQuiz\Server\TakeAQuiz.Server.csproj", "{A5B66C51-9DBB-4769-B4D7-F865A671AF64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakeAQuiz.Client", "TakeAQuiz\Client\TakeAQuiz.Client.csproj", "{E291082E-0C6B-4DFA-A0BF-A5BE7257D0E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeAQuiz.Client", "TakeAQuiz\Client\TakeAQuiz.Client.csproj", "{E291082E-0C6B-4DFA-A0BF-A5BE7257D0E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakeAQuiz.Shared", "TakeAQuiz\Shared\TakeAQuiz.Shared.csproj", "{8775C512-7DE8-4E55-8889-32B6B981DCBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeAQuiz.Shared", "TakeAQuiz\Shared\TakeAQuiz.Shared.csproj", "{8775C512-7DE8-4E55-8889-32B6B981DCBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
