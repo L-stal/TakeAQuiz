@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace TakeAQuiz
 {
@@ -26,6 +28,8 @@ namespace TakeAQuiz
 
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            builder.Services.AddMudServices();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
