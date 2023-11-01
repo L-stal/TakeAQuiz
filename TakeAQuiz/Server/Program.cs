@@ -29,8 +29,6 @@ namespace TakeAQuiz
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            builder.Services.AddMudServices();
-
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
