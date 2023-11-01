@@ -1,0 +1,48 @@
+﻿@page "/create-quiz"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<div class="ma-5 d-flex justify-center">
+<h1>Create a Quiz!</h1>
+</div>
+<MudGrid Class="d-flex justify-center">
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success" >
+                <MudTextField T="string" Label="Title" Required="true" RequiredError="You need a Title on your Quiz!" />
+                <div class="questions">
+                    @for (int i = 0; i < questionSets.Count; i++)
+                    {
+                        <div>
+                            <h1>Question @(i + 1)</h1>
+                    
+                            <MudTextField T="string" Label="Question" Required="true" RequiredError="A question is required" />
+                            <MudTextField T="string" Label="Media" Required="true" RequiredError="Add a video or picture for your question" />
+                            <MudTextField T="string" Label="Answer" Required="true" RequiredError="What is the answer?" />
+                        </div>
+                    }
+                </div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="AddQuestion">Add Question</MudButton>
+            </MudForm>   
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Create</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool success;
+    MudForm form;
+    List<object> questionSets = new List<object> { new object() };
+
+    void AddQuestion()
+    {
+        questionSets.Add(new object());
+    }
+
+
+
+}
+
+

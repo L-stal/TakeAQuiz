@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using TakeAQuiz.Client;
 
 namespace TakeAQuiz.Client
@@ -18,8 +19,8 @@ namespace TakeAQuiz.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("TakeAQuiz.ServerAPI"));
-
-            builder.Services.AddApiAuthorization();
+			builder.Services.AddMudServices();
+			builder.Services.AddApiAuthorization();
 
             await builder.Build().RunAsync();
         }

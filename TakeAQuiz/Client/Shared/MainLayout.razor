@@ -1,18 +1,20 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<MudLayout>
+    <MudAppBar Color="Color.Primary">
+        <MudLink Color="Color.Inherit" Underline="Underline.None" Href="/">Home</MudLink>
+        <MudSpacer />
+        <MudLink Color="Color.Inherit" Underline="Underline.None" Href="/login">Login</MudLink>
+        <MudSpacer />
+        <MudLink Color="Color.Inherit" Underline="Underline.None" Href="/create-quiz">Create Quiz</MudLink>
+
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
