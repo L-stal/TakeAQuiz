@@ -1,7 +1,39 @@
 ﻿@page "/profile"
+@inject ProfileService ProfileService;
+@using TakeAQuiz.Server.Service;
+@using TakeAQuiz.Shared.ViewModels;
 
-<h3>Profile</h3>
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Elevation="6" Class="pa-6 ma-8">
+            <MudImage Src="" Alt="Profile picture" Elevation="4" Class="rounded-lg" />
+            <MudText Typo="Typo.h4">@userData.UserName</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Elevation="6" Class="pa-6 ma-8">
+            <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
+                     ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
+                <MudTabPanel Text="Item One">
+                    <MudText>Content One</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Item Two">
+                    <MudText>Content Two</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Item Three">
+                    <MudText>Content Three</MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
+    private UserViewModel userData;
 
+    protected override async Task OnInitializedAsync()
+    {
+        userData = await ProfileService.GetUserData();
+    }
 }
