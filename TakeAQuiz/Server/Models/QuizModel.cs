@@ -14,6 +14,9 @@ namespace TakeAQuiz.Server.Models
         public virtual ApplicationUser? User { get; set; }
 
         [Required]
+        public string Title { get; set; }
+
+        [Required]
         public int MaxScore { get; set; }
 
         [AllowNull]
@@ -21,5 +24,7 @@ namespace TakeAQuiz.Server.Models
 
         [AllowNull]
         public int? OverallRating { get; set; }
+
+        public virtual List<QuestionModel> Questions { get; set; } = new List<QuestionModel>();
     }
 }

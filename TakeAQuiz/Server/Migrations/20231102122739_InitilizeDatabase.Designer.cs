@@ -12,14 +12,14 @@ using TakeAQuiz.Server.Data;
 namespace TakeAQuiz.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231031125021_InitializeDatabase")]
-    partial class InitializeDatabase
+    [Migration("20231102122739_InitilizeDatabase")]
+    partial class InitilizeDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.22")
+                .HasAnnotation("ProductVersion", "6.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -378,9 +378,8 @@ namespace TakeAQuiz.Server.Migrations
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Score")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -406,9 +405,6 @@ namespace TakeAQuiz.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -416,12 +412,15 @@ namespace TakeAQuiz.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Video")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId");
+                    b.HasIndex("QuizId");
 
                     b.ToTable("Questions");
                 });
@@ -442,6 +441,10 @@ namespace TakeAQuiz.Server.Migrations
 
                     b.Property<int?>("OverallRating")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -523,13 +526,13 @@ namespace TakeAQuiz.Server.Migrations
 
             modelBuilder.Entity("TakeAQuiz.Server.Models.QuestionModel", b =>
                 {
-                    b.HasOne("TakeAQuiz.Server.Models.GameModel", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
+                    b.HasOne("TakeAQuiz.Server.Models.QuizModel", "Quiz")
+                        .WithMany("Questions")
+                        .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Game");
+                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("TakeAQuiz.Server.Models.QuizModel", b =>
@@ -539,6 +542,11 @@ namespace TakeAQuiz.Server.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TakeAQuiz.Server.Models.QuizModel", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

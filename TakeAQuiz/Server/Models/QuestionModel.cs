@@ -9,9 +9,10 @@ namespace TakeAQuiz.Server.Models
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("Game")]
-        public int GameId { get; set; }
-        public virtual GameModel? Game { get; set; }
+        [ForeignKey("Quiz")]
+        public int QuizId { get; set; }
+        public virtual QuizModel? Quiz { get; set; }
+
 
         [Required]
         public string Question { get; set; }

@@ -17,6 +17,6 @@ namespace TakeAQuiz.Server.Models
         public virtual ApplicationUser? Player { get; set; }
 
         [Required]
-        public string Score { get; set; }
+        public int Score { get; set; }
     }
 }
