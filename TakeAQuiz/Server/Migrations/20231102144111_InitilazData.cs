@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TakeAQuiz.Server.Migrations
 {
-    public partial class InitilizeDatabase : Migration
+    public partial class InitilazData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -268,8 +268,7 @@ namespace TakeAQuiz.Server.Migrations
                     QuizId = table.Column<int>(type: "int", nullable: false),
                     Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Video = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Media = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -12,8 +12,8 @@ using TakeAQuiz.Server.Data;
 namespace TakeAQuiz.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231102122739_InitilizeDatabase")]
-    partial class InitilizeDatabase
+    [Migration("20231102144111_InitilazData")]
+    partial class InitilazData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -405,7 +405,8 @@ namespace TakeAQuiz.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Media")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Question")
@@ -414,9 +415,6 @@ namespace TakeAQuiz.Server.Migrations
 
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Video")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

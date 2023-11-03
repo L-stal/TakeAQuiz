@@ -20,10 +20,7 @@ namespace TakeAQuiz.Server.Models
         [Required]
         public string Answer { get; set; }
 
-        [AllowNull]
-        public string? Image { get; set; }
-
-        [AllowNull]
-        public string? Video { get; set; }
+        [Required]
+        public string Media { get; set; }
     }
 }

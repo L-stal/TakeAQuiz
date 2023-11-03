@@ -1,5 +1,5 @@
 ﻿
-namespace TakeAQuiz.Client.ViewModels
+namespace TakeAQuiz.Shared.ViewModels
 {
     public class QuizViewModel
     {
@@ -8,6 +8,8 @@ namespace TakeAQuiz.Client.ViewModels
         public int GamesPlayed { get; set; }
 
         public int OverallRating { get; set; }
+
+        public virtual List<QuestionViewModel> Questions { get; set; } = new List<QuestionViewModel>();
 
 
     }

@@ -403,7 +403,8 @@ namespace TakeAQuiz.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("Media")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Question")
@@ -412,9 +413,6 @@ namespace TakeAQuiz.Server.Migrations
 
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Video")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
