@@ -1,13 +1,20 @@
 ﻿@page "/profile"
-@inject ProfileService ProfileService;
-@using TakeAQuiz.Server.Service;
 @using TakeAQuiz.Shared.ViewModels;
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudGrid>
     <MudItem xs="12">
         <MudPaper Elevation="6" Class="pa-6 ma-8">
             <MudImage Src="" Alt="Profile picture" Elevation="4" Class="rounded-lg" />
-            <MudText Typo="Typo.h4">@userData.UserName</MudText>
+            @if (userInfo != null)
+            {
+                <MudText Typo="Typo.h4">@userInfo.UserName</MudText>
+            }
+            else
+            {
+                <p>User information is not available.</p>
+            }
         </MudPaper>
     </MudItem>
 
@@ -30,10 +37,15 @@
 </MudGrid>
 
 @code {
-    private UserViewModel userData;
+    private UserViewModel userInfo;
 
     protected override async Task OnInitializedAsync()
     {
-        userData = await ProfileService.GetUserData();
+        var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+
+        if (user != null && user.IsAuthenticated)
+        {
+            userInfo = await Http.GetFromJsonAsync<UserViewModel>("api/profile/getuserdata");
+        }
     }
 }

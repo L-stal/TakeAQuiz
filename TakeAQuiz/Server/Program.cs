@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
@@ -16,6 +17,7 @@ namespace TakeAQuiz
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -57,7 +59,6 @@ namespace TakeAQuiz
             app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapRazorPages();
             app.MapControllers();

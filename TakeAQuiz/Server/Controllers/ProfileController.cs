@@ -14,22 +14,24 @@ namespace TakeAQuiz.Server.Controllers
     [Authorize]
     public class ProfileController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ProfileController(UserManager<ApplicationUser> userManager)
         {
-            _context = context;
             _userManager = userManager;
         }
 
         [HttpGet("getuserdata")]
-        public UserViewModel GetUserData()
+        public async Task<ActionResult<UserViewModel>> GetUserData()
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var user = _userManager.Users.FirstOrDefault(u => u.Id == userId);
+                var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
 
                 var quizzes = new List<string>();
 
@@ -39,11 +41,11 @@ namespace TakeAQuiz.Server.Controllers
                     Quizzes = quizzes
                 };
 
-                return userInfo;
+                return Ok(userInfo);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error", ex);
+                return StatusCode(500, "An error occurred.");
             }
         }
     }
