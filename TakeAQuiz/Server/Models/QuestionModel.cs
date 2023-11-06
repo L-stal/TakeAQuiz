@@ -13,7 +13,6 @@ namespace TakeAQuiz.Server.Models
         public int QuizId { get; set; }
         public virtual QuizModel? Quiz { get; set; }
 
-
         [Required]
         public string Question { get; set; }
 
