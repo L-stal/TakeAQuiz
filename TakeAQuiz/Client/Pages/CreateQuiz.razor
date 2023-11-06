@@ -28,7 +28,6 @@
                         </div>
                     }
                 </div>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="AddQuestion">Add Question</MudButton>
              <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="NewQuestion">´New Question</MudButton>  
             </MudForm>   
         </MudPaper>
@@ -42,30 +41,24 @@
     bool success;
     MudForm form = new MudForm();
     //List of questions to the quiz
-    List<QuestionViewModel> questionSets = new List<QuestionViewModel> { new QuestionViewModel() };
+    List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
     QuizViewModel quiz = new QuizViewModel();
     QuestionViewModel currentQuestion = new QuestionViewModel();
-
+    //FIT BUG WHERE YOU NEED TO ADD A NEW QUESTIONS TO SAVE THE LAST ONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!<---------------------------------------------------------
     //Creates divs for new questions and adds them to the list
     //These look the same atm bc bug testing
-    public void AddQuestion()
-    {
-        currentQuestion = new QuestionViewModel();
-        questionSets.Add(currentQuestion);
-        quiz.Questions.Add(currentQuestion);
-        StateHasChanged();
-    }
     public void NewQuestion()
     {
         currentQuestion = new QuestionViewModel(); // Reset the currentQuestion for the next question
         questionSets.Add(currentQuestion);
-        quiz.Questions.Add(currentQuestion);
         StateHasChanged();
     }
 
     //Check if form is valid, then sends in data to controller
     private async Task CreateQuizAsync()
     {
+        quiz.Questions = questionSets;
+
         await form.Validate();
 
         if (form.IsValid)
