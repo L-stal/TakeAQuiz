@@ -1,0 +1,72 @@
+﻿@page "/create-quiz"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using TakeAQuiz.Shared.ViewModels;
+@inject HttpClient _http
+
+
+
+
+
+<div class="ma-5 d-flex justify-center">
+<h1>Create a Quiz!</h1>
+</div>
+<MudGrid Class="d-flex justify-center">
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label="Title" @bind-Value=@quiz.Title Required="true" RequiredError="You need a Title on your Quiz!" />
+                <div class="questions">
+                    @for (int i = 0; i < questionSets.Count; i++)
+                    {
+                        var currentQuestion = questionSets[i]; //Use to set current question bc binding issues
+                        <div>
+                            <h1>Question @(i + 1)</h1>
+                            <MudTextField T="string" Label="Question" Required="true" @bind-Value="currentQuestion.Question" RequiredError="A question is required" />
+                            <MudTextField T="string" Label="Media" Required="true" @bind-Value="currentQuestion.Media" RequiredError="Add a video or picture for your question" />
+                            <MudTextField T="string" Label="Answer" Required="true" @bind-Value="currentQuestion.Answer" RequiredError="What is the answer?" />
+                        </div>
+                    }
+                </div>
+             <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="NewQuestion">´New Question</MudButton>  
+            </MudForm>   
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="@CreateQuizAsync">Create Quiz</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool success;
+    MudForm form = new MudForm();
+    //List of questions to the quiz
+    List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
+    QuizViewModel quiz = new QuizViewModel();
+    QuestionViewModel currentQuestion = new QuestionViewModel();
+    //FIT BUG WHERE YOU NEED TO ADD A NEW QUESTIONS TO SAVE THE LAST ONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!<---------------------------------------------------------
+    //Creates divs for new questions and adds them to the list
+    //These look the same atm bc bug testing
+    public void NewQuestion()
+    {
+        currentQuestion = new QuestionViewModel(); // Reset the currentQuestion for the next question
+        questionSets.Add(currentQuestion);
+        StateHasChanged();
+    }
+
+    //Check if form is valid, then sends in data to controller
+    private async Task CreateQuizAsync()
+    {
+        quiz.Questions = questionSets;
+
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+        }
+    }
+
+}
+
+
