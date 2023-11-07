@@ -20,6 +20,27 @@ namespace TakeAQuiz.Server.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet("getallquizzes")]
+        public async Task<List<QuizViewModel>> GetAllQuizzes()
+        {
+            var quizzes = _context.Quizzes.ToList();
+            
+            List<QuizViewModel> quizzesView = new List<QuizViewModel>();
+
+            foreach (var quiz in quizzes)
+            {
+                var quizView = new QuizViewModel
+                {
+                    Title = quiz.Title,
+                    MaxScore = quiz.MaxScore,
+                    GamesPlayed = quiz.GamesPlayed,
+                    OverallRating = quiz.OverallRating
+                };
+                quizzesView.Add(quizView);
+            }
+
+            return quizzesView;
+        }
 
         [HttpPost("createquiz")]
         public async Task<IActionResult> CreatQuiz([FromBody] QuizViewModel quiz)

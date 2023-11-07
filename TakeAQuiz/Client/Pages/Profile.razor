@@ -3,9 +3,9 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudGrid>
+<MudGrid Class="pa-10">
     <MudItem xs="12">
-        <MudPaper Elevation="6" Class="pa-6 ma-8">
+        <MudPaper Elevation="4" Class="pa-6 ma-4">
             <MudImage Src="" Alt="Profile picture" Elevation="4" Class="rounded-lg" />
             @if (userInfo != null)
             {
@@ -19,7 +19,7 @@
     </MudItem>
 
     <MudItem xs="12">
-        <MudPaper Elevation="6" Class="pa-6 ma-8">
+        <MudPaper Elevation="4" Class="pa-6 ma-4">
             @if (userInfo != null)
             {
                 @for(int i = 0; i < userInfo.Quizzes.Count(); i++) {
@@ -37,7 +37,7 @@
     </MudItem>
 
     <MudItem xs="12">
-        <MudPaper Elevation="6" Class="pa-6 ma-8">
+        <MudPaper Elevation="4" Class="pa-6 ma-4">
             <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
                      ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
                 <MudTabPanel Text="Item One">
