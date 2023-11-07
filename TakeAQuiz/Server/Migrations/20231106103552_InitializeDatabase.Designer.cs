@@ -12,8 +12,8 @@ using TakeAQuiz.Server.Data;
 namespace TakeAQuiz.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231102144111_InitilazData")]
-    partial class InitilazData
+    [Migration("20231106103552_InitializeDatabase")]
+    partial class InitializeDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

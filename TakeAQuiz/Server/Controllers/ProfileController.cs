@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Security.Claims;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
@@ -15,10 +16,12 @@ namespace TakeAQuiz.Server.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public ProfileController(UserManager<ApplicationUser> userManager)
+        public ProfileController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet("getuserdata")]
@@ -27,18 +30,31 @@ namespace TakeAQuiz.Server.Controllers
             try
             {
                 var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var quizzes = _context.Quizzes.Where(id => id.UserId == user.Id).ToList();
+
+                List<QuizViewModel> quizzesView = new List<QuizViewModel>();
+
+                foreach (var quiz in quizzes)
+                {
+                    var quizView = new QuizViewModel
+                    {
+                        Title = quiz.Title,
+                        MaxScore = quiz.MaxScore,
+                        GamesPlayed = quiz.GamesPlayed,
+                        OverallRating = quiz.OverallRating,
+                    };
+                    quizzesView.Add(quizView);
+                }
 
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
 
-                var quizzes = new List<string>();
-
                 var userInfo = new UserViewModel()
                 {
                     UserName = user.UserName,
-                    Quizzes = quizzes
+                    Quizzes = quizzesView
                 };
 
                 return Ok(userInfo);

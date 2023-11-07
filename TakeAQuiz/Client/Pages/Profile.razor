@@ -20,6 +20,24 @@
 
     <MudItem xs="12">
         <MudPaper Elevation="6" Class="pa-6 ma-8">
+            @if (userInfo != null)
+            {
+                @for(int i = 0; i < userInfo.Quizzes.Count(); i++) {
+                    <h5>@userInfo.Quizzes[i].Title</h5>
+                    <h5>@userInfo.Quizzes[i].MaxScore</h5>
+                    <h5>@userInfo.Quizzes[i].GamesPlayed</h5>
+                    <h5>@userInfo.Quizzes[i].OverallRating</h5>
+                }
+            }
+            else
+            {
+                <p>User information is not available.</p>
+            }
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Elevation="6" Class="pa-6 ma-8">
             <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
                      ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
                 <MudTabPanel Text="Item One">
