@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Differencing;
 using System.Security.Claims;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
 using TakeAQuiz.Shared.ViewModels;
+using static MudBlazor.CategoryTypes;
 
 namespace TakeAQuiz.Server.Controllers
 {
@@ -40,6 +43,46 @@ namespace TakeAQuiz.Server.Controllers
             }
 
             return quizzesView;
+        }
+
+        [HttpGet("getquiz/{title}")]
+        public async Task<QuizViewModel> GetQuiz(string title)
+        {
+            var quiz = _context.Quizzes.Where(t => t.Title == title).FirstOrDefault();
+
+            var quizView = new QuizViewModel
+            {
+                Title = quiz.Title,
+                GamesPlayed = quiz.GamesPlayed,
+                MaxScore = quiz.MaxScore,
+                OverallRating = quiz.OverallRating,
+                Questions = new List<QuestionViewModel>()
+            };
+
+            foreach (var question in quiz.Questions)
+            {
+                var questionsView = new QuestionViewModel
+                {
+                    Question = question.Question,
+                    Answer = question.Answer,
+                    Media = question.Media,
+                    TimeLimit = question.TimeLimit,
+                    MockAnswers = new List<MockViewModel>()
+                };
+
+                foreach (var mock in question.MockAnswers)
+                {
+                    var mockView = new MockViewModel
+                    {
+                        MockAnswer = mock.MockAnswer
+                    };
+                    questionsView.MockAnswers.Add(mockView);
+
+                }
+                quizView.Questions.Add(questionsView);
+            }
+
+            return quizView;
         }
 
         [HttpPost("createquiz")]

@@ -1,14 +1,47 @@
 ﻿@page "/play-quiz/{title}"
+@using TakeAQuiz.Shared.ViewModels;
+@inject HttpClient Http;
 
 <MudGrid Class="pa-10">
     <MudItem xs="12">
         <MudPaper Elevation="4" Class="pa-6 ma-4">
             <MudText Typo="Typo.h4">@Title</MudText>
+            <MudText Typo="Typo.h4">@quizInfo.OverallRating</MudText>
+            <MudButton>Go Back</MudButton>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Elevation="4" Class="pa-6 ma-4">
+            @foreach (var question in quizInfo.Questions)
+            {
+                <MudText Typo="Typo.h4">@question.Question</MudText>
+                <MudText Typo="Typo.h4">@question.Media</MudText>
+            }
         </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
+    // Parameter
     [Parameter]
     public string? Title { get; set; }
+
+    // Quiz
+    private QuizViewModel quizInfo;
+    protected override async Task OnInitializedAsync()
+    {
+        quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
+
+        if (quizInfo != null)
+        {
+            foreach (var question in quizInfo.Questions)
+            {
+                if (question.MockAnswers == null)
+                {
+                    question.MockAnswers = new List<MockViewModel>();
+                }
+            }
+        }
+    }
 }
