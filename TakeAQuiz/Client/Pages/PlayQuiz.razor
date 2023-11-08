@@ -1,5 +1,14 @@
-﻿@page "/play-quiz/{id}"
+﻿@page "/play-quiz/{title}"
+
+<MudGrid Class="pa-10">
+    <MudItem xs="12">
+        <MudPaper Elevation="4" Class="pa-6 ma-4">
+            <MudText Typo="Typo.h4">@Title</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
-
+    [Parameter]
+    public string? Title { get; set; }
 }

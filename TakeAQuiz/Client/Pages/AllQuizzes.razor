@@ -19,11 +19,13 @@
         @foreach (var quiz in quizzes)
         {
             <MudItem xs="3">
-                <MudPaper Elevation="4" Class="pa-8 ma-4">
-                    <MudText Typo="Typo.h5">@quiz.Title</MudText>
-                    <MudText Typo="Typo.h6">@quiz.GamesPlayed</MudText>
-                    <MudText Typo="Typo.h6">@quiz.OverallRating</MudText>
-                </MudPaper>
+                <MudLink Underline="Underline.None" Href="@($"/play-quiz/{quiz.Title}")">
+                    <MudPaper Elevation="4" Class="pa-8 ma-4">
+                        <MudText Typo="Typo.h5">@quiz.Title</MudText>
+                        <MudText Typo="Typo.h6">@quiz.GamesPlayed</MudText>
+                        <MudText Typo="Typo.h6">@quiz.OverallRating</MudText>
+                    </MudPaper>
+                </MudLink>
             </MudItem>
         }
     }
@@ -34,11 +36,13 @@
         @if (selectedQuiz != null)
         {
             <MudItem xs="3">
-                <MudPaper Elevation="4" Class="pa-8 ma-4">
-                    <MudText Typo="Typo.h5">@selectedQuiz.Title</MudText>
-                    <MudText Typo="Typo.h6">@selectedQuiz.GamesPlayed</MudText>
-                    <MudText Typo="Typo.h6">@selectedQuiz.OverallRating</MudText>
-                </MudPaper>
+                <MudLink Underline="Underline.None" Href="@($"/play-quiz/{selectedQuiz.Title}")">
+                    <MudPaper Elevation="4" Class="pa-8 ma-4">
+                        <MudText Typo="Typo.h5">@selectedQuiz.Title</MudText>
+                        <MudText Typo="Typo.h6">@selectedQuiz.GamesPlayed</MudText>
+                        <MudText Typo="Typo.h6">@selectedQuiz.OverallRating</MudText>
+                    </MudPaper>
+                </MudLink>
             </MudItem>
         }
         else
