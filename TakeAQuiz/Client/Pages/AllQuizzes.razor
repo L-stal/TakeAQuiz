@@ -1,0 +1,84 @@
+﻿@page "/view-quizzes"
+@using TakeAQuiz.Shared.ViewModels;
+@inject HttpClient Http;
+
+<MudGrid Class="pa-10">
+    <MudItem xs="12">
+        <MudPaper Elevation="4" Class="pa-8 ma-4 d-flex justify-content-between align-center">
+            <MudText Typo="Typo.h4">All Quizzes</MudText>
+            <MudAutocomplete Style="width: 350px; margin: 0 auto;" Label="Search Quiz" @bind-Value="value" SearchFunc="@Search"
+                             ResetValueOnEmptyText="@resetValueOnEmptyText"
+                             CoerceText="@coerceText" CoerceValue="@coerceValue"
+                             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
+            <MudButton Class="py-2 px-4 mx-4 rounded" @onclick="@ResetSearch" Style="background-color: rgba(89,74,226,1); color: rgba(255,255,255,1);">Reset Search</MudButton>
+        </MudPaper>
+    </MudItem>
+    
+    @if (string.IsNullOrEmpty(value))
+    {
+        @foreach (var quiz in quizzes)
+        {
+            <MudItem xs="3">
+                <MudPaper Elevation="4" Class="pa-8 ma-4">
+                    <MudText Typo="Typo.h5">@quiz.Title</MudText>
+                    <MudText Typo="Typo.h6">@quiz.GamesPlayed</MudText>
+                    <MudText Typo="Typo.h6">@quiz.OverallRating</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    }
+    else
+    {
+        var selectedQuiz = quizzes.FirstOrDefault(q => q.Title.Equals(value, StringComparison.InvariantCultureIgnoreCase));
+
+        @if (selectedQuiz != null)
+        {
+            <MudItem xs="3">
+                <MudPaper Elevation="4" Class="pa-8 ma-4">
+                    <MudText Typo="Typo.h5">@selectedQuiz.Title</MudText>
+                    <MudText Typo="Typo.h6">@selectedQuiz.GamesPlayed</MudText>
+                    <MudText Typo="Typo.h6">@selectedQuiz.OverallRating</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="3">
+                <MudText Typo="Typo.h6">Quiz not found.</MudText>
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+@code {
+    // API
+    private List<QuizViewModel> quizzes = new List<QuizViewModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        quizzes = await Http.GetFromJsonAsync<List<QuizViewModel>>("api/quiz/getallquizzes");
+    }
+
+    // Search
+    private bool resetValueOnEmptyText;
+    private bool coerceText;
+    private bool coerceValue;
+    private string? value;
+
+    private async Task<IEnumerable<string>> Search(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return new string[0];
+        }
+
+        return quizzes.Where(x => x.Title
+            .Contains(value, StringComparison.InvariantCultureIgnoreCase))
+            .Select(x => x.Title);
+    }
+
+    private async Task ResetSearch()
+    {
+        this.value = string.Empty;
+    }
+}
