@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TakeAQuiz.Server.Migrations
 {
-    public partial class InitializeDatabase : Migration
+    public partial class InitDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -218,6 +218,7 @@ namespace TakeAQuiz.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaxScore = table.Column<int>(type: "int", nullable: false),
                     GamesPlayed = table.Column<int>(type: "int", nullable: true),
                     OverallRating = table.Column<int>(type: "int", nullable: true)
@@ -267,8 +268,8 @@ namespace TakeAQuiz.Server.Migrations
                     QuizId = table.Column<int>(type: "int", nullable: false),
                     Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Video = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Media = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TimeLimit = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -277,6 +278,26 @@ namespace TakeAQuiz.Server.Migrations
                         name: "FK_Questions_Quizzes_QuizId",
                         column: x => x.QuizId,
                         principalTable: "Quizzes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MockAnswers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
+                    MockAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MockAnswers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MockAnswers_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -347,6 +368,11 @@ namespace TakeAQuiz.Server.Migrations
                 column: "Use");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MockAnswers_QuestionId",
+                table: "MockAnswers",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_ConsumedTime",
                 table: "PersistedGrants",
                 column: "ConsumedTime");
@@ -404,13 +430,16 @@ namespace TakeAQuiz.Server.Migrations
                 name: "Keys");
 
             migrationBuilder.DropTable(
+                name: "MockAnswers");
+
+            migrationBuilder.DropTable(
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
-                name: "Questions");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "Quizzes");

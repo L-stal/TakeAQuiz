@@ -17,5 +17,6 @@ namespace TakeAQuiz.Server.Data
         public DbSet<GameModel> Games { get; set; }
         public DbSet<QuestionModel> Questions { get; set; }
         public DbSet<QuizModel> Quizzes { get; set; }
+        public DbSet<MockModel> MockAnswers { get; set; }
     }
 }

@@ -43,10 +43,23 @@ namespace TakeAQuiz.Server.Controllers
                     Answer = item.Answer,
                     Media = item.Media,
                     QuizId = quizObject.Id,
-
+                    TimeLimit = item.TimeLimit,
+                    MockAnswers = new List<MockModel>(),
                 };
+                foreach (var mocks in item.MockAnswers)
+                {
+                    var mock = new MockModel
+                    {
+                        QuestionId = question.Id,
+                        MockAnswer = mocks.MockAnswer,
+                    };
+
+                    question.MockAnswers.Add(mock);
+                    _context.MockAnswers.Add(mock);
+                }
                 _context.Questions.Add(question);
             }
+
             _context.SaveChanges();
             return Ok(new { Message = "Quiz created successfully!" });
         }

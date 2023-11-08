@@ -21,5 +21,8 @@ namespace TakeAQuiz.Server.Models
 
         [Required]
         public string Media { get; set; }
+        public int? TimeLimit { get; set; }
+
+        public virtual List<MockModel> MockAnswers { get; set; } = new List<MockModel>();
     }
 }
