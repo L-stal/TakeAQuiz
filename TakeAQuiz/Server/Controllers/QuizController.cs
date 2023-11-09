@@ -64,7 +64,7 @@ namespace TakeAQuiz.Server.Controllers
                     Answer = item.Answer,
                     Media = item.Media,
                     QuizId = quizObject.Id,
-                    TimeLimit = item.TimeLimit,
+                    TimeLimit = item.TimeLimit == 0 ? null : item.TimeLimit,
                     MockAnswers = new List<MockModel>(),
                 };
                 foreach (var mocks in item.MockAnswers)
