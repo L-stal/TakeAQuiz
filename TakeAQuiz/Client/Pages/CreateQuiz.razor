@@ -30,7 +30,7 @@
 					{
 						@foreach (var mockAnswer in currentQuestion.MockAnswers)
 						{
-							<MudTextField T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer" Required="true" RequiredError="You need 3 mock answers" />
+							<MudTextField T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer"  Required="true" RequiredError="You need 3 mock answers" />
 						}
 						<MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="RemoveMockAnswers">Remove Mock Answers</MudButton>
 					}
@@ -103,9 +103,10 @@
 	{
 		timeLimit = true;
 	}
-	private void RemoveMockAnswers()
+	private async Task RemoveMockAnswers()
 	{
 		currentQuestion.MockAnswers.Clear();
+		await Task.Delay(1);
 		multiAnswer = false;
 	}
 	private void RemoveTimeLimit()
