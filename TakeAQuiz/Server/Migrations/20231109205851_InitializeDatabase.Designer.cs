@@ -12,7 +12,7 @@ using TakeAQuiz.Server.Data;
 namespace TakeAQuiz.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231106103552_InitializeDatabase")]
+    [Migration("20231109205851_InitializeDatabase")]
     partial class InitializeDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -393,6 +393,28 @@ namespace TakeAQuiz.Server.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("TakeAQuiz.Server.Models.MockModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("MockAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("MockAnswers");
+                });
+
             modelBuilder.Entity("TakeAQuiz.Server.Models.QuestionModel", b =>
                 {
                     b.Property<int>("Id")
@@ -414,6 +436,9 @@ namespace TakeAQuiz.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TimeLimit")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -522,6 +547,17 @@ namespace TakeAQuiz.Server.Migrations
                     b.Navigation("Quiz");
                 });
 
+            modelBuilder.Entity("TakeAQuiz.Server.Models.MockModel", b =>
+                {
+                    b.HasOne("TakeAQuiz.Server.Models.QuestionModel", "Question")
+                        .WithMany("MockAnswers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("TakeAQuiz.Server.Models.QuestionModel", b =>
                 {
                     b.HasOne("TakeAQuiz.Server.Models.QuizModel", "Quiz")
@@ -540,6 +576,11 @@ namespace TakeAQuiz.Server.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TakeAQuiz.Server.Models.QuestionModel", b =>
+                {
+                    b.Navigation("MockAnswers");
                 });
 
             modelBuilder.Entity("TakeAQuiz.Server.Models.QuizModel", b =>

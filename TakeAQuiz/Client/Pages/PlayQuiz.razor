@@ -13,10 +13,13 @@
 
     <MudItem xs="12">
         <MudPaper Elevation="4" Class="pa-6 ma-4">
-            @foreach (var question in quizInfo.Questions)
+            @if (quizInfo != null && quizInfo.Questions != null)
             {
-                <MudText Typo="Typo.h4">@question.Question</MudText>
-                <MudText Typo="Typo.h4">@question.Media</MudText>
+                @foreach (var question in quizInfo.Questions)
+                {
+                    <MudText Typo="Typo.h5">Question: @question.Question</MudText>
+                    <MudText Typo="Typo.h5">Media: @question.Media</MudText>
+                }
             }
         </MudPaper>
     </MudItem>
@@ -29,19 +32,9 @@
 
     // Quiz
     private QuizViewModel quizInfo;
+
     protected override async Task OnInitializedAsync()
     {
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
-
-        if (quizInfo != null)
-        {
-            foreach (var question in quizInfo.Questions)
-            {
-                if (question.MockAnswers == null)
-                {
-                    question.MockAnswers = new List<MockViewModel>();
-                }
-            }
-        }
     }
 }
