@@ -7,109 +7,130 @@
 
 
 <div class="ma-5 d-flex justify-center">
-<h1>Create a Quiz!</h1>
+	<h1>Create a Quiz!</h1>
 </div>
 <MudGrid Class="d-flex justify-center pa-3 ma-3">
-    <MudItem xs="12" sm="7" Class="pa-3">
-            <MudForm @ref="form" @bind-IsValid="@success">
-                <MudPaper Elevation="6" Class="pa-4">
-                
-                    <MudTextField T="string" Label="Title" @bind-Value=@quiz.Title Required="true" RequiredError="You need a Title on your Quiz!" />
-                </MudPaper>
+	<MudItem xs="12" sm="7" Class="pa-3">
+		<MudForm @ref="form" @bind-IsValid="@success">
+			<MudPaper Elevation="6" Class="pa-4">
 
-               @for (int i = 0; i < questionSets.Count ; i++)
-                {
-                 var currentQuestion = questionSets[i];
-                     <div class="border-2 mud-border-primary pa-4 ma-4">
-                            <h1>Question @(i + 1)</h1>
-                            <MudTextField T="string" Label="Question" Required="true" @bind-Value="currentQuestion.Question" RequiredError="A question is required" />
-                            <MudTextField T="string" Label="Add a URL for your picture or video" Required="true" @bind-Value="currentQuestion.Media" RequiredError="Add a video or picture for your question" />
-                            <MudTextField T="string" Label="Answer" Required="true" @bind-Value="currentQuestion.Answer" RequiredError="What is the answer?" />
+				<MudTextField T="string" Label="Title" @bind-Value=@quiz.Title Required="true" RequiredError="You need a Title on your Quiz!" />
+			</MudPaper>
 
-                        @if (multiAnswer)
-                        {
-                            @foreach (var mockAnswer in currentQuestion.MockAnswers)
-                            {
-                                <MudTextField T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer" Required="true" RequiredError="You need 3 mock answers" />
-                            }
-                        }
-                        @if (timeLimit)
-                        {
-                        <MudRadioGroup Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
-                            <MudRadio Option="15" Color="Color.Primary">15s</MudRadio>
-                            <MudRadio Option="30" Color="Color.Primary">30s</MudRadio>
-                            <MudRadio Option="45" Color="Color.Primary">45s</MudRadio>
-                        </MudRadioGroup>
-                        
-                        }
+			@for (int i = 0; i < questionSets.Count; i++)
+			{
+				var currentIndex = i;
+				var currentQuestion = questionSets[i];
+				<div class="border-2 mud-border-primary pa-4 ma-4">
+				<div class="d-flex justify-space-between align-center">
+					<h1>Question @(i + 1)</h1>
+					@if(currentIndex > 0)
+					{
+						<MudButton Variant="Variant.Filled"  StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteQuestion(currentIndex)"></MudButton>
+					}
+					</div>
+					<MudTextField T="string" Label="Question" Required="true" @bind-Value="currentQuestion.Question" RequiredError="A question is required" />
+					<MudTextField T="string" Label="Add a URL for your picture or video" Required="true" @bind-Value="currentQuestion.Media" RequiredError="Add a video or picture for your question" />
+					<MudTextField T="string" Label="Answer" Required="true" @bind-Value="currentQuestion.Answer" RequiredError="What is the answer?" />
 
-                    <MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="AddMultiAnswers">Add Mock Answers</MudButton>
-                    <MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="AddTimeLimit">Add Time Limit</MudButton>
-                     </div>
-               }
-            </MudForm>   
-        <MudPaper Elevation="6" Class="pa-2 mt-2 d-flex justify-space-between">
-        <MudButton Class="ma-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="@CreateQuizAsync">Create Quiz</MudButton>
-        <MudButton Class="ma-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="NewQuestion">New Question</MudButton>  
-        </MudPaper>
-    </MudItem>
+					@if (currentQuestion.MultiAnswer)
+					{
+						@foreach (var mockAnswer in currentQuestion.MockAnswers)
+						{
+							<MudTextField Tag="i" T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer" Required="true" RequiredError="You need 3 mock answers" />
+						}
+						<MudButton Tag="i" Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => RemoveMockAnswers(currentIndex)">Remove Mock Answers</MudButton>
+					}
+					else
+					{
+						<MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => AddMockAnswer(currentIndex)">Add Mock Answers</MudButton>
+					}
+					@if (currentQuestion.HasTimeLimit)
+					{
+						<MudRadioGroup  Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
+							<MudRadio Option="15" Color="Color.Primary">15s</MudRadio>
+							<MudRadio Option="30" Color="Color.Primary">30s</MudRadio>
+							<MudRadio Option="45" Color="Color.Primary">45s</MudRadio>
+						</MudRadioGroup>
+						<MudButton  Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>RemoveTimeLimit(currentIndex)">Remove Time Limit</MudButton>
+					}
+					else
+					{
+						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>AddTimeLimit(currentIndex)">Add Time Limit</MudButton>
+					}
+				</div>
+			}
+		</MudForm>
+		<MudPaper Elevation="6" Class="pa-2 mt-2 d-flex justify-space-between">
+			<MudButton Class="ma-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="@CreateQuizAsync">Create Quiz</MudButton>
+			<MudButton Class="ma-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="NewQuestion">New Question</MudButton>
+		</MudPaper>
+	</MudItem>
 </MudGrid>
 
 
 @code {
-    //Error on selecting time limit , generic missmatch
+	bool success;
+	MudForm form = new MudForm();
+	//List of questions to the quiz
+	QuestionViewModel currentQuestion;
+	List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
+	QuizViewModel quiz = new QuizViewModel();
 
-    //Add 3 fake questions to the multi asnwer questions 
-    bool success;
-    bool multiAnswer = false;
-    bool timeLimit = false;
-    MudForm form = new MudForm();
+	//Creates divs for new questions and adds them to the list
+	public void NewQuestion()
+	{
+		// Reset the currentQuestion for the next question
+		currentQuestion = new QuestionViewModel();
+		questionSets.Add(currentQuestion);
 
-    //List of questions to the quiz
-    QuestionViewModel currentQuestion;
-    List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
-    QuizViewModel quiz = new QuizViewModel();
+	}
+	private void AddMockAnswer(int i)
+	{
+		//Gets the question with the index value sen in from the form
+		var question = questionSets[i];
+		question.MultiAnswer = true;
+		while (question.MockAnswers.Count < 3)
+		{
+			question.MockAnswers.Add(new MockViewModel());
+		}
+	}
+	private void AddTimeLimit(int i)
+	{
+		var question = questionSets[i];
+		question.HasTimeLimit = true;
+	}
+	private async Task RemoveMockAnswers(int i)
+	{
+		var question = questionSets[i];
+		question.MockAnswers.Clear();
+		question.MultiAnswer = false;
+		//Delay Magic!
+		await Task.Delay(1);
+	}
+	private void RemoveTimeLimit(int i)
+	{
+		var question = questionSets[i];
+		question.HasTimeLimit = false;
+		question.TimeLimit = 0;
+	}
+	private void DeleteQuestion(int i)
+	{
+		questionSets.RemoveAt(i);
 
-    //Creates divs for new questions and adds them to the list
-    public void NewQuestion()
-    {
+	}
+	//Check if form is valid, then sends in data to controller
+	private async Task CreateQuizAsync()
+	{
+		quiz.Questions = questionSets;
 
-        // Reset the currentQuestion for the next question
-        currentQuestion = new QuestionViewModel(); 
-        questionSets.Add(currentQuestion);
+		await form.Validate();
 
-    }
-
-    public void AddMultiAnswers()
-    {
-        multiAnswer = true;
-        AddMockAnswer();
-
-    }
-    private void AddMockAnswer()
-    {
-        while (currentQuestion.MockAnswers.Count < 3)
-        {
-            currentQuestion.MockAnswers.Add(new MockViewModel());            
-        }
-    }
-    private void AddTimeLimit()
-    {
-        timeLimit = true;
-    }
-    //Check if form is valid, then sends in data to controller
-    private async Task CreateQuizAsync()
-    {
-        
-        quiz.Questions = questionSets;
-
-        await form.Validate();
-
-        if (form.IsValid)
-        {
-            await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
-        }
-    }
+		if (form.IsValid && quiz.Questions.Count > 0)
+		{
+			await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+		}
+	}
 }
 
 
