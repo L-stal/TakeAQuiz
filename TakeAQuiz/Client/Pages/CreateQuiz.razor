@@ -19,6 +19,7 @@
 
 			@for (int i = 0; i < questionSets.Count; i++)
 			{
+				var currentIndex = i;
 				var currentQuestion = questionSets[i];
 				<div class="border-2 mud-border-primary pa-4 ma-4">
 					<h1>Question @(i + 1)</h1>
@@ -26,30 +27,30 @@
 					<MudTextField T="string" Label="Add a URL for your picture or video" Required="true" @bind-Value="currentQuestion.Media" RequiredError="Add a video or picture for your question" />
 					<MudTextField T="string" Label="Answer" Required="true" @bind-Value="currentQuestion.Answer" RequiredError="What is the answer?" />
 
-					@if (multiAnswer)
+					@if (currentQuestion.MultiAnswer)
 					{
 						@foreach (var mockAnswer in currentQuestion.MockAnswers)
 						{
-							<MudTextField T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer"  Required="true" RequiredError="You need 3 mock answers" />
+							<MudTextField Tag="i" T="string" Label="Add a mock answer" @bind-Value="mockAnswer.MockAnswer" Required="true" RequiredError="You need 3 mock answers" />
 						}
-						<MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="RemoveMockAnswers">Remove Mock Answers</MudButton>
+						<MudButton Tag="i" Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => RemoveMockAnswers(currentIndex)">Remove Mock Answers</MudButton>
 					}
 					else
 					{
-						<MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="AddMultiAnswers">Add Mock Answers</MudButton>
+						<MudButton Class="mt-2 mr-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => AddMockAnswer(currentIndex)">Add Mock Answers</MudButton>
 					}
-					@if (timeLimit)
+					@if (currentQuestion.HasTimeLimit)
 					{
-						<MudRadioGroup Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
+						<MudRadioGroup  Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
 							<MudRadio Option="15" Color="Color.Primary">15s</MudRadio>
 							<MudRadio Option="30" Color="Color.Primary">30s</MudRadio>
 							<MudRadio Option="45" Color="Color.Primary">45s</MudRadio>
 						</MudRadioGroup>
-						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="RemoveTimeLimit">Remove Time Limit</MudButton>
+						<MudButton  Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>RemoveTimeLimit(currentIndex)">Remove Time Limit</MudButton>
 					}
 					else
 					{
-						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="AddTimeLimit">Add Time Limit</MudButton>
+						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>AddTimeLimit(currentIndex)">Add Time Limit</MudButton>
 					}
 				</div>
 			}
@@ -63,14 +64,8 @@
 
 
 @code {
-	//Error on selecting time limit , generic missmatch
-
-	//Add 3 fake questions to the multi asnwer questions
 	bool success;
-	bool multiAnswer = false;
-	bool timeLimit = false;
 	MudForm form = new MudForm();
-
 	//List of questions to the quiz
 	QuestionViewModel currentQuestion;
 	List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
@@ -79,40 +74,39 @@
 	//Creates divs for new questions and adds them to the list
 	public void NewQuestion()
 	{
-
 		// Reset the currentQuestion for the next question
 		currentQuestion = new QuestionViewModel();
 		questionSets.Add(currentQuestion);
 
 	}
-
-	public void AddMultiAnswers()
+	private void AddMockAnswer(int i)
 	{
-		multiAnswer = true;
-		AddMockAnswer();
-
-	}
-	private void AddMockAnswer()
-	{
-		while (currentQuestion.MockAnswers.Count < 3)
+		//Gets the question with the index value sen in from the form
+		var question = questionSets[i];
+		question.MultiAnswer = true;
+		while (question.MockAnswers.Count < 3)
 		{
-			currentQuestion.MockAnswers.Add(new MockViewModel());
+			question.MockAnswers.Add(new MockViewModel());
 		}
 	}
-	private void AddTimeLimit()
+	private void AddTimeLimit(int i )
 	{
-		timeLimit = true;
+		var question = questionSets[i];
+		question.HasTimeLimit = true;
 	}
-	private async Task RemoveMockAnswers()
+	private async Task RemoveMockAnswers(int i)
 	{
-		currentQuestion.MockAnswers.Clear();
+		var question = questionSets[i];
+		question.MockAnswers.Clear();
+		question.MultiAnswer = false;
+		//Delay Magic!
 		await Task.Delay(1);
-		multiAnswer = false;
 	}
-	private void RemoveTimeLimit()
+	private void RemoveTimeLimit(int i)
 	{
-		currentQuestion.TimeLimit = 0;
-		timeLimit = false;
+		var question = questionSets[i];
+		question.HasTimeLimit = false;
+		question.TimeLimit = 0;
 	}
 	//Check if form is valid, then sends in data to controller
 	private async Task CreateQuizAsync()
