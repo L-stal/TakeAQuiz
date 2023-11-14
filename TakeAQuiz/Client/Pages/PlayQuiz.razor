@@ -1,5 +1,6 @@
 ﻿@page "/play-quiz/{title}"
 @using TakeAQuiz.Shared.ViewModels;
+@using TakeAQuiz.Shared.GameLogic;
 @inject HttpClient Http;
 
 <MudGrid Class="pa-10">
@@ -12,29 +13,45 @@
     </MudItem>
 
     <MudItem xs="12">
-        <MudPaper Elevation="4" Class="pa-6 ma-4">
-            @if (quizInfo != null && quizInfo.Questions != null)
+        <MudPaper Elevation="4" Class="pa-6 ma-4" Height="500px">
+            @if (!game.ActiveGame)
             {
-                @foreach (var question in quizInfo.Questions)
+                <MudButton OnClick="@game.StartGame">Play</MudButton>
+            } 
+            else
+            {
+                if (quizInfo.Questions[game.QIndex].MockAnswers.Count() == null)
                 {
-                    <MudText Typo="Typo.h5">Question: @question.Question</MudText>
-                    <MudText Typo="Typo.h5">Media: @question.Media</MudText>
+                    <MudTextField @bind-Value="Guess" Label="Standard" Variant="Variant.Text"></MudTextField>
+                }
+                else
+                {
+                    for (int i = 0; i < quizInfo.Questions[game.QIndex].MockAnswers.Count(); i++)
+                    {
+                        <MudButton OnClick="(e) => game.MakeGuess(quizInfo.Questions[game.QIndex].MockAnswers[i].ToString(), quizInfo.Questions[game.QIndex].Answer)" Variant="Variant.Outlined" Color="Color.Primary">@quizInfo.Questions[game.QIndex].MockAnswers[i].MockAnswer</MudButton>
+                    }
+                    <MudButton OnClick="(e) => game.MakeGuess(quizInfo.Questions[game.QIndex].Answer.ToString(), quizInfo.Questions[game.QIndex].Answer)" Variant="Variant.Outlined" Color="Color.Primary">@quizInfo.Questions[game.QIndex].Answer</MudButton>
                 }
             }
         </MudPaper>
     </MudItem>
 </MudGrid>
-
+ 
 @code {
     // Parameter
     [Parameter]
     public string? Title { get; set; }
 
     // Quiz
-    private QuizViewModel quizInfo;
+    private GameLogic game = new GameLogic();
+
+    private QuizViewModel? quizInfo = new QuizViewModel();
 
     protected override async Task OnInitializedAsync()
     {
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
+        game.CurrentScore += quizInfo.MaxScore;
     }
+
+    public string? Guess { get; set; }
 }
