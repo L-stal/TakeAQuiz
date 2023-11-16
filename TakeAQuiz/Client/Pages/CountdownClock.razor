@@ -1,0 +1,58 @@
+@page "/countdownclock"
+
+<MudText Typo="Typo.h6">Time remaining:</MudText>
+<MudText Typo="Typo.body1" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
+@code {
+    [Parameter]
+    public int InitialTimeLimit { get; set; }
+    [Parameter]
+    public string Guess { get; set; }
+    [Parameter] 
+    public int QuestionIndex { get; set; }
+
+    private int timeRemaining;
+    private bool isRunning = false;
+
+    protected override void OnInitialized()
+    {
+        ResetCountdown();
+        StartCountdown();
+    }
+
+    private void StartCountdown()
+    {
+        isRunning = true;
+        _ = CountdownAsync();
+    }
+
+    private async Task CountdownAsync()
+    {
+        while (isRunning && timeRemaining > 0)
+        {
+            await Task.Delay(1000);
+            timeRemaining--;
+
+            StateHasChanged();
+        }
+    }
+
+    private void ResetCountdown()
+    {
+        timeRemaining = InitialTimeLimit;
+        isRunning = false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Guess != null || QuestionIndex > 0)
+        {
+            isRunning = false;
+            ResetCountdown();
+
+            if (Guess != null && QuestionIndex > 0)
+            {
+                StartCountdown();
+            }
+        }
+    }
+}
