@@ -7,7 +7,6 @@ using System.Security.Claims;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
 using TakeAQuiz.Shared.ViewModels;
-using static MudBlazor.CategoryTypes;
 
 namespace TakeAQuiz.Server.Controllers
 {
@@ -102,7 +101,7 @@ namespace TakeAQuiz.Server.Controllers
                     Answer = item.Answer,
                     Media = item.Media,
                     QuizId = quizObject.Id,
-                    TimeLimit = item.TimeLimit == 0 ? null : item.TimeLimit,
+                    TimeLimit = item.TimeLimit,
                     MockAnswers = new List<MockModel>(),
                 };
                 foreach (var mocks in item.MockAnswers)
