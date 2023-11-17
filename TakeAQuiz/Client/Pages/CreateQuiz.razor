@@ -18,6 +18,7 @@
 			</MudPaper>
 
 			@for (int i = 0; i < questionSets.Count; i++)
+			//foreach (var q in questionList)
 			{
 				var currentIndex = i;
 				var currentQuestion = questionSets[i];
@@ -76,7 +77,6 @@
 	QuestionViewModel currentQuestion;
 	List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
 	QuizViewModel quiz = new QuizViewModel();
-
 	//Creates divs for new questions and adds them to the list
 	public void NewQuestion()
 	{
