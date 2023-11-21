@@ -34,7 +34,7 @@ namespace TakeAQuiz.Shared.GameLogic
         {
             if (guess != answer)
             {
-                CurrentScore = -100;
+                CurrentScore =- 100;
                 QResult = false;
             } 
             else
@@ -43,12 +43,11 @@ namespace TakeAQuiz.Shared.GameLogic
             }
             ActiveQuestion = false;
 
-            if (QIndex > QAmount)
+            if (QIndex >= QAmount)
             {
                 FinishedGame = true;
                 EndGame();
             }
-             QIndex++;
         }
 
         public async Task EndGame()

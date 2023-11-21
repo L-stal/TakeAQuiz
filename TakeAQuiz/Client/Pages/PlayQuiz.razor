@@ -27,22 +27,40 @@
             } 
             else
             {
+                @if (quizInfo.Questions[Game.QIndex].TimeLimit > 0)
+                {
+                    <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" ActiveQuestion="Game.ActiveQuestion" QuestionResult="Game.QResult" />
+                }
+
                 <MudContainer Class="d-flex justify-center flex-column">
-
-                    @if (quizInfo.Questions[Game.QIndex].TimeLimit > 0)
+                    @if (Game.QResult == true)
                     {
-                        <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" ActiveQuestion="Game.ActiveQuestion" />
+                        <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
+                            <MudText Typo="Typo.h4" Color="Color.Success">Correct guess! :)</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary">+100 points</MudText>
+                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Next Question</MudButton>
+                        </MudPaper>
                     }
-
-                    @if (quizInfo.Questions[Game.QIndex].Media.Contains("youtube"))
+                    else if (Game.QResult == false)
                     {
-                        <iframe style="height: 40svh; width: 100%;" src="@($"{quizInfo.Questions[Game.QIndex].Media}&autoplay=1&showinfo=0&player.setVolume(5)")" title="Video" frameborder="0"
-                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture">
-                        </iframe>
+                        <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
+                            <MudText Typo="Typo.h4" Color="Color.Error">Wrong guess! :(</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary">-100 points</MudText>
+                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Next Question</MudButton>
+                        </MudPaper>
                     }
                     else
                     {
-                        <MudImage Style="height: 40svh; width: 100%; object-fit: cover;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@quizInfo.Questions[Game.QIndex].Media" Alt="Media" />
+                        @if (quizInfo.Questions[Game.QIndex].Media.Contains("youtube"))
+                        {
+                            <iframe style="height: 40svh; width: 100%;" src="@($"{quizInfo.Questions[Game.QIndex].Media}&autoplay=1&showinfo=0&player.setVolume(5)")" title="Video" frameborder="0"
+                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture">
+                            </iframe>
+                        }
+                        else
+                        {
+                            <MudImage Style="height: 40svh; width: 100%; object-fit: cover;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@quizInfo.Questions[Game.QIndex].Media" Alt="Media" />
+                        }
                     }
 
                     <MudText Typo="Typo.h4" Style="text-align: center; padding: 1rem; margin-top: 1rem;">@quizInfo.Questions[Game.QIndex].Question</MudText>
@@ -103,7 +121,6 @@
                         <MudTextField @bind-Value="InputGuess" T="string" Label="Answer" Variant="Variant.Outlined" Class="mr-4 pa-6" Style="font-size: 1.2rem;"></MudTextField>
                         <MudButton @onclick="() => SendGuess(InputGuess , quizInfo.Questions[Game.QIndex].Answer)">Guess</MudButton>
                     </MudContainer>
-  
                 }
             }
         </MudPaper>
@@ -120,8 +137,17 @@
 
     public async Task SendGuess(string guess, string answer)
     {
-        await Game.MakeGuess(guess, answer);
-        await InvokeAsync(StateHasChanged);
+        if (Game.QResult == null)
+        {
+            await Game.MakeGuess(guess, answer);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void NextQuestion()
+    {
+        Game.QResult = null;
+        Game.QIndex++;
     }
 
     protected override async Task OnInitializedAsync()

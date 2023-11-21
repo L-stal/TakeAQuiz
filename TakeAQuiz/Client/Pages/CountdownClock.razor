@@ -6,12 +6,14 @@
 @code {
     [Parameter] public int InitialTimeLimit { get; set; }
     [Parameter] public int QuestionIndex { get; set; }
-    [Parameter] public bool? ActiveQuestion {get ; set;}
+    [Parameter] public bool? ActiveQuestion { get; set; }
+    [Parameter] public bool? QuestionResult { get; set; }
     private int timeRemaining;
     private CancellationTokenSource cancellationToken;
 
     protected override void OnInitialized()
     {
+        cancellationToken?.Cancel();
         ResetCountdown();
         StartCountdown();
     }
@@ -29,11 +31,9 @@
         while (ActiveQuestion == true && timeRemaining > 0)
         {
             await Task.Delay(1000, cancellationToken);
-
             timeRemaining--;
 
             cancellationToken.ThrowIfCancellationRequested();
-
             StateHasChanged();
         }
 
@@ -56,7 +56,6 @@
         if (QuestionIndex > 0)
         {
             cancellationToken?.Cancel();
-
             ResetCountdown();
             StartCountdown();
         }
