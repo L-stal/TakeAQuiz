@@ -1,58 +1,63 @@
 @page "/countdownclock"
 
 <MudText Typo="Typo.h6">Time remaining:</MudText>
-<MudText Typo="Typo.body1" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
-@code {
-    [Parameter]
-    public int InitialTimeLimit { get; set; }
-    [Parameter]
-    public string Guess { get; set; }
-    [Parameter] 
-    public int QuestionIndex { get; set; }
+<MudText Typo="Typo.body2" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
 
+@code {
+    [Parameter] public int InitialTimeLimit { get; set; }
+    [Parameter] public int QuestionIndex { get; set; }
+    [Parameter] public bool? ActiveQuestion { get; set; }
+    [Parameter] public bool? QuestionResult { get; set; }
     private int timeRemaining;
-    private bool isRunning = false;
+    private CancellationTokenSource cancellationToken;
 
     protected override void OnInitialized()
     {
+        cancellationToken?.Cancel();
         ResetCountdown();
         StartCountdown();
     }
 
     private void StartCountdown()
     {
-        isRunning = true;
-        _ = CountdownAsync();
+        ActiveQuestion = true;
+        cancellationToken = new CancellationTokenSource();
+
+        _ = CountdownAsync(cancellationToken.Token);
     }
 
-    private async Task CountdownAsync()
+    private async Task CountdownAsync(CancellationToken cancellationToken = default)
     {
-        while (isRunning && timeRemaining > 0)
+        while (ActiveQuestion == true && timeRemaining > 0)
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000, cancellationToken);
             timeRemaining--;
 
+            cancellationToken.ThrowIfCancellationRequested();
             StateHasChanged();
         }
+
+        if (timeRemaining <= 0)
+        {
+            ResetCountdown();
+        }
+
+        StateHasChanged();
     }
 
     private void ResetCountdown()
     {
+        ActiveQuestion = false;
         timeRemaining = InitialTimeLimit;
-        isRunning = false;
     }
 
     protected override void OnParametersSet()
     {
-        if (Guess != null || QuestionIndex > 0)
+        if (QuestionIndex > 0)
         {
-            isRunning = false;
+            cancellationToken?.Cancel();
             ResetCountdown();
-
-            if (Guess != null && QuestionIndex > 0)
-            {
-                StartCountdown();
-            }
+            StartCountdown();
         }
     }
 }
