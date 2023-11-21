@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TakeAQuiz.Server.Migrations
 {
-    public partial class InitializeDatabase : Migration
+    public partial class Initdatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -269,7 +269,7 @@ namespace TakeAQuiz.Server.Migrations
                     Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Media = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TimeLimit = table.Column<int>(type: "int", nullable: true)
+                    TimeLimit = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

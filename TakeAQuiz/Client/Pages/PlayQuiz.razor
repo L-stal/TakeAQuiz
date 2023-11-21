@@ -41,64 +41,71 @@
                         <MudImage Height="600" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@quizInfo.Questions[game.QIndex].Media" Alt="Media" />
                     }
                 </MudContainer>
-
-                if (quizInfo.Questions[game.QIndex].MockAnswers != null && quizInfo.Questions[game.QIndex].MockAnswers.Any())
+                @if (game.QIndex == quizInfo.Questions.Count())
                 {
-                    <MudContainer Class="d-flex flex-column ma-0 pa-0">
-                        <MudContainer Class="mb-6 ma-0 pa-0 d-flex justify-space-between">
-                            <MudButton @onclick="() => SendGuess(
-                                                quizInfo.Questions[game.QIndex].MockAnswers[0].MockAnswer,
-                                                quizInfo.Questions[game.QIndex].Answer)"
-                                       Variant="Variant.Outlined"
-                                       Color="Color.Primary"
-                                       Class="mr-4 pa-6"
-                                       Style="width: 49%; font-size: 1.2rem;">
-                                @quizInfo.Questions[game.QIndex].MockAnswers[0].MockAnswer
-                            </MudButton>
-
-                            <MudButton @onclick="() =>SendGuess(
-                                                quizInfo.Questions[game.QIndex].MockAnswers[1].MockAnswer,
-                                                quizInfo.Questions[game.QIndex].Answer)"
-                                       Variant="Variant.Outlined"
-                                       Color="Color.Primary"
-                                       Class="pa-6"
-                                       Style="width: 49%; font-size: 1.2rem;">
-                                @quizInfo.Questions[game.QIndex].MockAnswers[1].MockAnswer
-                            </MudButton>
-                        </MudContainer>
-                        <MudContainer Class="ma-0 pa-0 d-flex justify-space-between">
-                            <MudButton @onclick="() => SendGuess(
-                                                quizInfo.Questions[game.QIndex].MockAnswers[2].MockAnswer,
-                                                quizInfo.Questions[game.QIndex].Answer)"
-                                       Variant="Variant.Outlined"
-                                       Color="Color.Primary"
-                                       Class="mr-4 pa-6"
-                                       Style="width: 49%; font-size: 1.2rem;">
-                                @quizInfo.Questions[game.QIndex].MockAnswers[2].MockAnswer
-                            </MudButton>
-
-
-                            <MudButton @onclick="() => SendGuess(
-                                                quizInfo.Questions[game.QIndex].Answer,
-                                                quizInfo.Questions[game.QIndex].Answer)"
-                                       Variant="Variant.Outlined"
-                                       Color="Color.Primary"
-                                       Class="pa-6"
-                                       Style="width: 49%; font-size: 1.2rem;">
-                                @quizInfo.Questions[game.QIndex].Answer
-                            </MudButton>
-                        </MudContainer>
-                    </MudContainer>
-
+                    <p>game done</p>
                 }
                 else
                 {
-                    <MudContainer Class="d-flex justify-center" Style="width: 49%;">
-                        <MudTextField @bind-Value="Guess" T="string" Label="Answer" Variant="Variant.Outlined" Class="mr-4 pa-6" Style="font-size: 1.2rem;"></MudTextField>
-                        <MudButton @onclick="() => SendGuess(Guess , quizInfo.Questions[game.QIndex].Answer)">Guess</MudButton>
-                    </MudContainer>
-  
+                    @if (quizInfo.Questions[game.QIndex].MockAnswers != null && quizInfo.Questions[game.QIndex].MockAnswers.Count() > 0)
+                    {
+                        <MudContainer Class="d-flex flex-column ma-0 pa-0">
+                            <MudContainer Class="mb-6 ma-0 pa-0 d-flex justify-space-between">
+                                <MudButton @onclick="() => SendGuess(
+                                                quizInfo.Questions[game.QIndex].MockAnswers[0].MockAnswer,
+                                                quizInfo.Questions[game.QIndex].Answer)"
+                                           Variant="Variant.Outlined"
+                                           Color="Color.Primary"
+                                           Class="mr-4 pa-6"
+                                           Style="width: 49%; font-size: 1.2rem;">
+                                    @quizInfo.Questions[game.QIndex].MockAnswers[0].MockAnswer
+                                </MudButton>
+
+                                <MudButton @onclick="() =>SendGuess(
+                                                quizInfo.Questions[game.QIndex].MockAnswers[1].MockAnswer,
+                                                quizInfo.Questions[game.QIndex].Answer)"
+                                           Variant="Variant.Outlined"
+                                           Color="Color.Primary"
+                                           Class="pa-6"
+                                           Style="width: 49%; font-size: 1.2rem;">
+                                    @quizInfo.Questions[game.QIndex].MockAnswers[1].MockAnswer
+                                </MudButton>
+                            </MudContainer>
+                            <MudContainer Class="ma-0 pa-0 d-flex justify-space-between">
+                                <MudButton @onclick="() => SendGuess(
+                                                quizInfo.Questions[game.QIndex].MockAnswers[2].MockAnswer,
+                                                quizInfo.Questions[game.QIndex].Answer)"
+                                           Variant="Variant.Outlined"
+                                           Color="Color.Primary"
+                                           Class="mr-4 pa-6"
+                                           Style="width: 49%; font-size: 1.2rem;">
+                                    @quizInfo.Questions[game.QIndex].MockAnswers[2].MockAnswer
+                                </MudButton>
+
+
+                                <MudButton @onclick="() => SendGuess(
+                                                quizInfo.Questions[game.QIndex].Answer,
+                                                quizInfo.Questions[game.QIndex].Answer)"
+                                           Variant="Variant.Outlined"
+                                           Color="Color.Primary"
+                                           Class="pa-6"
+                                           Style="width: 49%; font-size: 1.2rem;">
+                                    @quizInfo.Questions[game.QIndex].Answer
+                                </MudButton>
+                            </MudContainer>
+                        </MudContainer>
+
+                    }
+                    else
+                    {
+                        <MudContainer Class="d-flex justify-center" Style="width: 49%;">
+                            <MudTextField @bind-Value="Guess" T="string" Label="Answer" Variant="Variant.Outlined" Class="mr-4 pa-6" Style="font-size: 1.2rem;"></MudTextField>
+                            <MudButton @onclick="() => SendGuess(Guess , quizInfo.Questions[game.QIndex].Answer)">Guess</MudButton>
+                        </MudContainer>
+
+                    }
                 }
+
             }
         </MudPaper>
     </MudItem>
@@ -109,22 +116,22 @@
     [Parameter]
     public string? Title { get; set; }
     // Quiz
-    private GameLogic game = new GameLogic();
+    private GameLogic game;
     private QuizViewModel? quizInfo = new QuizViewModel();
     public string? Guess { get; set; }
 
 
     public async Task SendGuess(string guess, string answer)
     {
-        await game.MakeGuess(guess,answer);
+        await game.MakeGuess(guess,answer,quizInfo.Title);
         await InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnInitializedAsync()
     {
+        game = new GameLogic(Http);
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
         game.CurrentScore += quizInfo.MaxScore;
-
-        // game.StateChange += () => InvokeAsync(StateHasChanged);
+        game.QAmount += quizInfo.Questions.Count();
     }
 }

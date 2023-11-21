@@ -12,8 +12,8 @@ using TakeAQuiz.Server.Data;
 namespace TakeAQuiz.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231109205851_InitializeDatabase")]
-    partial class InitializeDatabase
+    [Migration("20231121131518_Initdatabase")]
+    partial class Initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -438,7 +438,7 @@ namespace TakeAQuiz.Server.Migrations
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TimeLimit")
+                    b.Property<int>("TimeLimit")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
