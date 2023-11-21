@@ -131,12 +131,15 @@
     [Parameter]
     public string? Title { get; set; }
 
-    private GameLogic Game = new GameLogic();
+    private GameLogic Game;
     private QuizViewModel? quizInfo = new QuizViewModel();
     private string? InputGuess { get; set; }
 
     public async Task SendGuess(string guess, string answer)
     {
+        await game.MakeGuess(guess,answer,quizInfo.Title);
+        await InvokeAsync(StateHasChanged);
+
         if (Game.QResult == null)
         {
             await Game.MakeGuess(guess, answer);
@@ -152,9 +155,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Game = new GameLogic(Http);
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
         Game.CurrentScore += quizInfo.MaxScore;
         Game.QAmount += quizInfo.Questions.Count();
-        // game.StateChange += () => InvokeAsync(StateHasChanged);
+        // Game.StateChange += () => InvokeAsync(StateHasChanged);
     }
 }

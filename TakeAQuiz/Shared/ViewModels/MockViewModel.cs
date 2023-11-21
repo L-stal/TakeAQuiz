@@ -8,6 +8,6 @@ namespace TakeAQuiz.Shared.ViewModels
 {
     public class MockViewModel
     {
-        public string MockAnswer { get; set; }
+        public string? MockAnswer { get; set; }
     }
 }

@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TakeAQuiz.Shared.ViewModels;
+using static System.Net.WebRequestMethods;
+
 
 namespace TakeAQuiz.Shared.GameLogic
 {
     public class GameLogic
     {
+        private readonly HttpClient _httpClient;
+      
+        public GameLogic(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+      
         // Game active status
         public bool ActiveGame { get; set; }
         // Question active status
@@ -45,14 +55,15 @@ namespace TakeAQuiz.Shared.GameLogic
 
             if (QIndex >= QAmount)
             {
+                await EndGame(title, CurrentScore);
                 FinishedGame = true;
-                EndGame();
             }
         }
 
-        public async Task EndGame()
+        public async Task EndGame(string title, int score)
         {
-            // API ANROP
+            await _httpClient.PostAsJsonAsync("api/game/savegame", new { title = title, score = score });
         }
     }
 }
+

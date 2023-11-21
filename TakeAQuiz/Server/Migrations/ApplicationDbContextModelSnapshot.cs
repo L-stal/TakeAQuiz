@@ -436,7 +436,7 @@ namespace TakeAQuiz.Server.Migrations
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TimeLimit")
+                    b.Property<int>("TimeLimit")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
