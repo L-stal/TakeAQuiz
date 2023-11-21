@@ -1,0 +1,63 @@
+@page "/countdownclock"
+
+<MudText Typo="Typo.h6">Time remaining:</MudText>
+<MudText Typo="Typo.body2" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
+
+@code {
+    [Parameter] public int InitialTimeLimit { get; set; }
+    [Parameter] public int QuestionIndex { get; set; }
+    [Parameter] public bool? ActiveQuestion { get; set; }
+    [Parameter] public bool? QuestionResult { get; set; }
+    private int timeRemaining;
+    private CancellationTokenSource cancellationToken;
+
+    protected override void OnInitialized()
+    {
+        cancellationToken?.Cancel();
+        ResetCountdown();
+        StartCountdown();
+    }
+
+    private void StartCountdown()
+    {
+        ActiveQuestion = true;
+        cancellationToken = new CancellationTokenSource();
+
+        _ = CountdownAsync(cancellationToken.Token);
+    }
+
+    private async Task CountdownAsync(CancellationToken cancellationToken = default)
+    {
+        while (ActiveQuestion == true && timeRemaining > 0)
+        {
+            await Task.Delay(1000, cancellationToken);
+            timeRemaining--;
+
+            cancellationToken.ThrowIfCancellationRequested();
+            StateHasChanged();
+        }
+
+        if (timeRemaining <= 0)
+        {
+            ResetCountdown();
+        }
+
+        StateHasChanged();
+    }
+
+    private void ResetCountdown()
+    {
+        ActiveQuestion = false;
+        timeRemaining = InitialTimeLimit;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (QuestionIndex > 0)
+        {
+            cancellationToken?.Cancel();
+            ResetCountdown();
+            StartCountdown();
+        }
+    }
+}

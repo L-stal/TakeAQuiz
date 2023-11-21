@@ -14,36 +14,50 @@ namespace TakeAQuiz.Shared.GameLogic
     public class GameLogic
     {
         private readonly HttpClient _httpClient;
+      
         public GameLogic(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+      
+        // Game active status
         public bool ActiveGame { get; set; }
+        // Question active status
+        public bool? ActiveQuestion { get; set; } = null;
+        // Game finished status
         public bool FinishedGame { get; set; }
+        // Amount of questions in quiz
         public int QAmount { get; set; }
+        // Index of current question being asked
         public int QIndex { get; set; }
+        // Current score being held by player
         public int CurrentScore { get; set; }
+        // Question answer result, correct/incorrect
+        public bool? QResult { get; set; } = null;
 
         public async Task StartGame()
         {
             ActiveGame = true;
         }
 
-
-        public async Task MakeGuess(string guess, string answer,string title)
+        public async Task MakeGuess(string guess, string answer)
         {
             if (guess != answer)
             {
-                CurrentScore -= 100;
-            }
-            QIndex++;    
-            if (QIndex == QAmount)
+                CurrentScore =- 100;
+                QResult = false;
+            } 
+            else
             {
-                await EndGame(title ,CurrentScore);
+                QResult = true;
+            }
+            ActiveQuestion = false;
+
+            if (QIndex >= QAmount)
+            {
+                await EndGame(title, CurrentScore);
                 FinishedGame = true;
             }
-
-            
         }
 
         public async Task EndGame(string title, int score)
