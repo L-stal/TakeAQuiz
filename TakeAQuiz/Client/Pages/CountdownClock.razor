@@ -30,14 +30,13 @@
 
     private async Task CountdownAsync(CancellationToken cancellationToken = default)
     {
-        await Task.Delay(500);
-
         while (isRunning && timeRemaining > 0)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(1000, cancellationToken);
 
-            await Task.Delay(1000);
             timeRemaining--;
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             StateHasChanged();
         }
@@ -46,12 +45,14 @@
         {
             ResetCountdown();
         }
+
+        StateHasChanged();
     }
 
     private void ResetCountdown()
     {
-        timeRemaining = InitialTimeLimit;
         isRunning = false;
+        timeRemaining = InitialTimeLimit;
     }
 
     protected override void OnParametersSet()
