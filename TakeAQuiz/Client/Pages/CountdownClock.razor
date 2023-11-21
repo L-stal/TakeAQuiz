@@ -1,17 +1,13 @@
 @page "/countdownclock"
 
 <MudText Typo="Typo.h6">Time remaining:</MudText>
-<MudText Typo="Typo.body1" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
+<MudText Typo="Typo.body2" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
 
 @code {
-    [Parameter]
-    public int InitialTimeLimit { get; set; }
-
-    [Parameter]
-    public int QuestionIndex { get; set; }
-
+    [Parameter] public int InitialTimeLimit { get; set; }
+    [Parameter] public int QuestionIndex { get; set; }
+    [Parameter] public bool? ActiveQuestion {get ; set;}
     private int timeRemaining;
-    private bool isRunning = false;
     private CancellationTokenSource cancellationToken;
 
     protected override void OnInitialized()
@@ -22,7 +18,7 @@
 
     private void StartCountdown()
     {
-        isRunning = true;
+        ActiveQuestion = true;
         cancellationToken = new CancellationTokenSource();
 
         _ = CountdownAsync(cancellationToken.Token);
@@ -30,7 +26,7 @@
 
     private async Task CountdownAsync(CancellationToken cancellationToken = default)
     {
-        while (isRunning && timeRemaining > 0)
+        while (ActiveQuestion == true && timeRemaining > 0)
         {
             await Task.Delay(1000, cancellationToken);
 
@@ -51,7 +47,7 @@
 
     private void ResetCountdown()
     {
-        isRunning = false;
+        ActiveQuestion = false;
         timeRemaining = InitialTimeLimit;
     }
 

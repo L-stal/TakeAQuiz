@@ -10,11 +10,20 @@ namespace TakeAQuiz.Shared.GameLogic
 {
     public class GameLogic
     {
+        // Game active status
         public bool ActiveGame { get; set; }
+        // Question active status
+        public bool? ActiveQuestion { get; set; } = null;
+        // Game finished status
         public bool FinishedGame { get; set; }
+        // Amount of questions in quiz
         public int QAmount { get; set; }
+        // Index of current question being asked
         public int QIndex { get; set; }
+        // Current score being held by player
         public int CurrentScore { get; set; }
+        // Question answer result, correct/incorrect
+        public bool? QResult { get; set; } = null;
 
         public async Task StartGame()
         {
@@ -26,9 +35,15 @@ namespace TakeAQuiz.Shared.GameLogic
             if (guess != answer)
             {
                 CurrentScore = -100;
+                QResult = false;
+            } 
+            else
+            {
+                QResult = true;
             }
+            ActiveQuestion = false;
 
-            if (QIndex == QAmount)
+            if (QIndex > QAmount)
             {
                 FinishedGame = true;
                 EndGame();

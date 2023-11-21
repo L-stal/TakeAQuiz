@@ -1,5 +1,4 @@
 ﻿@page "/play-quiz/{title}"
-@using System.Timers;
 @using TakeAQuiz.Shared.ViewModels;
 @using TakeAQuiz.Shared.GameLogic;
 @inject HttpClient Http;
@@ -32,7 +31,7 @@
 
                     @if (quizInfo.Questions[Game.QIndex].TimeLimit > 0)
                     {
-                        <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" />
+                        <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" ActiveQuestion="Game.ActiveQuestion" />
                     }
 
                     @if (quizInfo.Questions[Game.QIndex].Media.Contains("youtube"))
@@ -101,8 +100,8 @@
                 else
                 {
                     <MudContainer Class="d-flex justify-center" Style="width: 49%;">
-                        <MudTextField @bind-Value="Guess" T="string" Label="Answer" Variant="Variant.Outlined" Class="mr-4 pa-6" Style="font-size: 1.2rem;"></MudTextField>
-                        <MudButton @onclick="() => SendGuess(Guess , quizInfo.Questions[Game.QIndex].Answer)">Guess</MudButton>
+                        <MudTextField @bind-Value="InputGuess" T="string" Label="Answer" Variant="Variant.Outlined" Class="mr-4 pa-6" Style="font-size: 1.2rem;"></MudTextField>
+                        <MudButton @onclick="() => SendGuess(InputGuess , quizInfo.Questions[Game.QIndex].Answer)">Guess</MudButton>
                     </MudContainer>
   
                 }
@@ -117,13 +116,11 @@
 
     private GameLogic Game = new GameLogic();
     private QuizViewModel? quizInfo = new QuizViewModel();
-    private string? Guess { get; set; }
-    private bool resetCountdownClock = false;
+    private string? InputGuess { get; set; }
 
     public async Task SendGuess(string guess, string answer)
     {
         await Game.MakeGuess(guess, answer);
-        resetCountdownClock = true;
         await InvokeAsync(StateHasChanged);
     }
 
