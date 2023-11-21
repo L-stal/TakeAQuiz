@@ -2,16 +2,17 @@
 
 <MudText Typo="Typo.h6">Time remaining:</MudText>
 <MudText Typo="Typo.body1" Style="margin-bottom: 1rem;">@(timeRemaining)s</MudText>
+
 @code {
     [Parameter]
     public int InitialTimeLimit { get; set; }
+
     [Parameter]
-    public string Guess { get; set; }
-    [Parameter] 
     public int QuestionIndex { get; set; }
 
     private int timeRemaining;
     private bool isRunning = false;
+    private CancellationTokenSource cancellationToken;
 
     protected override void OnInitialized()
     {
@@ -22,17 +23,28 @@
     private void StartCountdown()
     {
         isRunning = true;
-        _ = CountdownAsync();
+        cancellationToken = new CancellationTokenSource();
+
+        _ = CountdownAsync(cancellationToken.Token);
     }
 
-    private async Task CountdownAsync()
+    private async Task CountdownAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Delay(500);
+
         while (isRunning && timeRemaining > 0)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             await Task.Delay(1000);
             timeRemaining--;
 
             StateHasChanged();
+        }
+
+        if (timeRemaining <= 0)
+        {
+            ResetCountdown();
         }
     }
 
@@ -44,15 +56,12 @@
 
     protected override void OnParametersSet()
     {
-        if (Guess != null || QuestionIndex > 0)
+        if (QuestionIndex > 0)
         {
-            isRunning = false;
-            ResetCountdown();
+            cancellationToken?.Cancel();
 
-            if (Guess != null && QuestionIndex > 0)
-            {
-                StartCountdown();
-            }
+            ResetCountdown();
+            StartCountdown();
         }
     }
 }

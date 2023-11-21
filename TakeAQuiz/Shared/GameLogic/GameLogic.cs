@@ -21,13 +21,13 @@ namespace TakeAQuiz.Shared.GameLogic
             ActiveGame = true;
         }
 
-
         public async Task MakeGuess(string guess, string answer)
         {
             if (guess != answer)
             {
                 CurrentScore = -100;
             }
+
             if (QIndex == QAmount)
             {
                 FinishedGame = true;
