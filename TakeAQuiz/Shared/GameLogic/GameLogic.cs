@@ -68,11 +68,6 @@ namespace TakeAQuiz.Shared.GameLogic
                 QResult = true;
             }
             ActiveQuestion = false;
-
-            if (FinishedGame)
-            {
-                await EndGame(title, CurrentScore);
-            }
         }
     }
 }

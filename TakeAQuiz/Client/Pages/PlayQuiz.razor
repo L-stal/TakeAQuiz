@@ -38,7 +38,7 @@
                         <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
                             <MudText Typo="Typo.h4" Color="Color.Success">Game finished!</MudText>
                             <MudText Typo="Typo.h5" Color="Color.Primary">Your score: @Game.CurrentScore</MudText>
-                            <MudButton OnClick="@OnInitializedAsync" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Replay</MudButton>
+                            <MudButton OnClick="Game.ResetGame" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Replay</MudButton>
                         </MudPaper>
                     }
                     else if (Game.QResult == true)
@@ -145,7 +145,7 @@
 
     public async Task SendGuess(string guess, string answer)
     {
-        if (Game.QResult == null)
+        if (Game.QResult == null && Game.FinishedGame != true)
         {
             await Game.MakeGuess(guess, answer, Title);
             InputGuess = "";
@@ -159,6 +159,7 @@
         {
             Game.QResult = null;
             Game.FinishedGame = true;
+            Game.EndGame(Title, Game.CurrentScore);
         } 
         else
         {
@@ -170,7 +171,6 @@
     protected override async Task OnInitializedAsync()
     {
         Game = new GameLogic(Http);
-        await Game.ResetGame();
 
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
 
