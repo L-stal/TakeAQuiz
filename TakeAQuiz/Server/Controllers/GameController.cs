@@ -37,6 +37,9 @@ namespace TakeAQuiz.Server.Controllers
                 Score = request.Score,
             };
 
+            // Todo:
+            // Increment games played by 1
+
             _context.Games.Add(game);
             await _context.SaveChangesAsync();
 
