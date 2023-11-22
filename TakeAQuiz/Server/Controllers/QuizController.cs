@@ -34,6 +34,7 @@ namespace TakeAQuiz.Server.Controllers
             {
                 var quizView = new QuizViewModel
                 {
+                    Id = quiz.Id,
                     Title = quiz.Title,
                     MaxScore = quiz.MaxScore,
                     GamesPlayed = quiz.GamesPlayed,
@@ -59,6 +60,7 @@ namespace TakeAQuiz.Server.Controllers
 
             var quizView = new QuizViewModel
             {
+                Id = quiz.Id,
                 Title = quiz.Title,
                 GamesPlayed = quiz.GamesPlayed ?? 0,
                 MaxScore = quiz.MaxScore,
