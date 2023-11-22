@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Security.Claims;
 using TakeAQuiz.Server.Data;
@@ -38,6 +39,7 @@ namespace TakeAQuiz.Server.Controllers
                 {
                     var quizView = new QuizViewModel
                     {
+                        Id = quiz.Id,
                         Title = quiz.Title,
                         MaxScore = quiz.MaxScore,
                         GamesPlayed = quiz.GamesPlayed,
@@ -58,6 +60,41 @@ namespace TakeAQuiz.Server.Controllers
                 };
 
                 return Ok(userInfo);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred.");
+            }
+        }
+
+        [HttpGet("getquizplayerhistory")]
+        public async Task<ActionResult<List<GameViewModel>>> GetQuizPlayerHistory()
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var games = _context.Games.Where(id => id.UserId == user.Id).ToList();
+
+                List<GameViewModel> gamesView = new List<GameViewModel>();
+
+                foreach (var game in games)
+                {
+                    var username = _userManager.Users
+                        .Where(id => id.Id == game.UserId)
+                        .Select(x => x.UserName)
+                        .FirstOrDefault();
+
+                    var gameView = new GameViewModel
+                    {
+                        QuizId = game.QuizId,
+                        Name = username,
+                        Score = game.Score
+                    };
+
+                    gamesView.Add(gameView);
+                }
+
+                return Ok(gamesView);
             }
             catch (Exception ex)
             {

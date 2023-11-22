@@ -3,8 +3,8 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudGrid Class="pa-10">
-    <MudItem xs="12">
+<MudGrid Class="d-flex justify-center pa-10">
+    <MudItem xs="8">
         <MudPaper Elevation="4" Class="pa-6 ma-4">
             @if (userInfo != null)
             {
@@ -17,23 +17,50 @@
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12">
+    <MudItem xs="8">
         <MudPaper Elevation="4" Class="pa-6 ma-4">
-            <MudText Typo="Typo.h4">Your created Quizzes</MudText>
+            <MudText Typo="Typo.h5">Your created Quizzes</MudText>
             <MudTabs Outlined="true" Position="Position.Top" Rounded="true" Border="true"
                      ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
-                @if (userInfo != null)
+                @if (userInfo != null && userInfo.Quizzes != null && userInfo.Quizzes.Any())
                 {
                     @for (int i = 0; i < userInfo.Quizzes.Count(); i++)
                     {
-                        <MudTabPanel Text="@userInfo.Quizzes[i].Title.ToString()">
-                            <MudText>Content One</MudText>
+                        var localIndex = i;
+
+                        <MudTabPanel Text="@userInfo.Quizzes[localIndex].Title">
+                            <div style="display: flex; justify-content: space-between;">
+                                <MudText Typo="Typo.h6">@userInfo.Quizzes[localIndex].Title</MudText>
+                                <MudRating ReadOnly="true" SelectedValue="userInfo.Quizzes[localIndex].OverallRating ?? 0" />
+                            </div>
+                            <MudText Typo="Typo.body1">Total games played: @userInfo.Quizzes[localIndex].GamesPlayed</MudText>
+                            <MudText Class="mt-8 mb-4" Typo="Typo.h6">Player Stats:</MudText>
+
+                            @if (gameInfo != null)
+                            {
+                                var quizGames = gameInfo.Where(g => g.QuizId == userInfo.Quizzes[localIndex].Id).ToList();
+
+                                <MudTable Items="quizGames" Hover="true" Breakpoint="Breakpoint.Sm">
+                                    <HeaderContent>
+                                        <MudTh>Name</MudTh>
+                                        <MudTh>Score</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                                        <MudTd DataLabel="Score">@context.Score</MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.body1">No game information available.</MudText>
+                            }
                         </MudTabPanel>
                     }
                 }
                 else
                 {
-                    <p>User information is not available.</p>
+                    <MudText Typo="Typo.h6">User information is not available or there are no quizzes.</MudText>
                 }
             </MudTabs>
         </MudPaper>
@@ -41,7 +68,8 @@
 </MudGrid>
 
 @code {
-    private UserViewModel userInfo;
+    private UserViewModel? userInfo;
+    private List<GameViewModel>? gameInfo;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +78,7 @@
         if (user != null && user.IsAuthenticated)
         {
             userInfo = await Http.GetFromJsonAsync<UserViewModel>("api/profile/getuserdata");
+            gameInfo = await Http.GetFromJsonAsync<List<GameViewModel>>("api/profile/getquizplayerhistory");
         }
     }
 }
