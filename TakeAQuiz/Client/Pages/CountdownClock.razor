@@ -8,6 +8,7 @@
     [Parameter] public int QuestionIndex { get; set; }
     [Parameter] public bool? ActiveQuestion { get; set; }
     [Parameter] public bool? QuestionResult { get; set; }
+    [Parameter] public EventCallback OnCountdownEnd { get; set; }
     private int timeRemaining;
     private CancellationTokenSource cancellationToken;
     protected override void OnInitialized()
@@ -34,6 +35,10 @@
 
             cancellationToken.ThrowIfCancellationRequested();
             StateHasChanged();
+        }
+        if (timeRemaining == 0)
+        {
+            await OnCountdownEnd.InvokeAsync();
         }
 
     }

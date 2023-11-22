@@ -58,7 +58,7 @@ namespace TakeAQuiz.Shared.GameLogic
 
         public async Task MakeGuess(string guess, string answer)
         {
-                ActiveQuestion = false;
+            ActiveQuestion = false;
             if (guess != answer)
             {
                 CurrentScore -= 100;
