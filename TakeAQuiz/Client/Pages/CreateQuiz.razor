@@ -3,7 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using TakeAQuiz.Shared.ViewModels;
 @inject HttpClient _http
-
+@inject NavigationManager NavigationManager
 
 
 <div class="ma-5 d-flex justify-center">
@@ -18,7 +18,6 @@
 			</MudPaper>
 
 			@for (int i = 0; i < questionSets.Count; i++)
-			//foreach (var q in questionList)
 			{
 				var currentIndex = i;
 				var currentQuestion = questionSets[i];
@@ -128,7 +127,12 @@
 
 		if (form.IsValid && quiz.Questions.Count > 0)
 		{
-			await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+			var response = await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+
+			if (response.IsSuccessStatusCode)
+			{
+				NavigationManager.NavigateTo($"/quiz-created/{quiz.Title}");
+			}
 		}
 	}
 }
