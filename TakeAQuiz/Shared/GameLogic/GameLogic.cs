@@ -40,11 +40,27 @@ namespace TakeAQuiz.Shared.GameLogic
             ActiveGame = true;
         }
 
-        public async Task MakeGuess(string guess, string answer)
+        public async Task ResetGame()
+        {
+            ActiveGame = false;
+            ActiveQuestion = null;
+            FinishedGame = false;
+            QAmount = 0;
+            QIndex = 0;
+            CurrentScore = 0;
+            QResult = null;
+        }
+
+        public async Task EndGame(string title, int score)
+        {
+            await _httpClient.PostAsJsonAsync("api/game/savegame", new { title = title, score = score });
+        }
+
+        public async Task MakeGuess(string guess, string answer, string title)
         {
             if (guess != answer)
             {
-                CurrentScore =- 100;
+                CurrentScore -= 100;
                 QResult = false;
             } 
             else
@@ -53,16 +69,10 @@ namespace TakeAQuiz.Shared.GameLogic
             }
             ActiveQuestion = false;
 
-            if (QIndex >= QAmount)
+            if (FinishedGame)
             {
                 await EndGame(title, CurrentScore);
-                FinishedGame = true;
             }
-        }
-
-        public async Task EndGame(string title, int score)
-        {
-            await _httpClient.PostAsJsonAsync("api/game/savegame", new { title = title, score = score });
         }
     }
 }
