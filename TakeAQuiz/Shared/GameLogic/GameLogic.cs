@@ -56,18 +56,18 @@ namespace TakeAQuiz.Shared.GameLogic
             await _httpClient.PostAsJsonAsync("api/game/savegame", new { title = title, score = score });
         }
 
-        public async Task MakeGuess(string guess, string answer, string title)
+        public async Task MakeGuess(string guess, string answer)
         {
+            ActiveQuestion = false;
             if (guess != answer)
             {
                 CurrentScore -= 100;
                 QResult = false;
-            } 
+            }
             else
             {
                 QResult = true;
             }
-            ActiveQuestion = false;
         }
     }
 }

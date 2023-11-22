@@ -8,9 +8,9 @@
     [Parameter] public int QuestionIndex { get; set; }
     [Parameter] public bool? ActiveQuestion { get; set; }
     [Parameter] public bool? QuestionResult { get; set; }
+    [Parameter] public EventCallback OnCountdownEnd { get; set; }
     private int timeRemaining;
     private CancellationTokenSource cancellationToken;
-
     protected override void OnInitialized()
     {
         cancellationToken?.Cancel();
@@ -36,15 +36,12 @@
             cancellationToken.ThrowIfCancellationRequested();
             StateHasChanged();
         }
-
-        if (timeRemaining <= 0)
+        if (timeRemaining == 0)
         {
-            ResetCountdown();
+            await OnCountdownEnd.InvokeAsync();
         }
 
-        StateHasChanged();
     }
-
     private void ResetCountdown()
     {
         ActiveQuestion = false;
@@ -53,7 +50,8 @@
 
     protected override void OnParametersSet()
     {
-        if (QuestionIndex > 0)
+
+        if (ActiveQuestion == true)
         {
             cancellationToken?.Cancel();
             ResetCountdown();

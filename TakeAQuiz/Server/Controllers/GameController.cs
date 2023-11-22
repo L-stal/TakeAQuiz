@@ -26,21 +26,25 @@ namespace TakeAQuiz.Server.Controllers
         public async Task<IActionResult> SaveGame([FromBody] SaveGameRequest request)
         {
             var quiz = await _context.Quizzes
+                .Include(q => q.User)
                 .Where(x => x.Title == request.Title)
-                .Select(x => x.Id)
                 .FirstOrDefaultAsync();
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
 
             var game = new GameModel()
             {
-                QuizId = quiz,
+                QuizId = quiz.Id,
                 UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
                 Score = request.Score,
             };
-
-            // Todo:
-            // Increment games played by 1
-
             _context.Games.Add(game);
+
+            quiz.GamesPlayed += 1;
+
             await _context.SaveChangesAsync();
 
             return Ok();

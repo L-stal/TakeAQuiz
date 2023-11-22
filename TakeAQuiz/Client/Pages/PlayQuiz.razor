@@ -29,7 +29,7 @@
             {
                 @if (quizInfo.Questions[Game.QIndex].TimeLimit > 0)
                 {
-                    <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" ActiveQuestion="Game.ActiveQuestion" QuestionResult="Game.QResult" />
+                    <CountdownClock InitialTimeLimit="@quizInfo.Questions[Game.QIndex].TimeLimit" QuestionIndex="Game.QIndex" ActiveQuestion="Game.ActiveQuestion" QuestionResult="Game.QResult" OnCountdownEnd="HandleCountdownEnd" />
                 }
 
                 <MudContainer Class="d-flex justify-center flex-column">
@@ -147,7 +147,7 @@
     {
         if (Game.QResult == null && Game.FinishedGame != true)
         {
-            await Game.MakeGuess(guess, answer, Title);
+            await Game.MakeGuess(guess, answer);
             InputGuess = "";
             await InvokeAsync(StateHasChanged);
         }
@@ -155,6 +155,7 @@
 
     public void NextQuestion()
     {
+
         if (Game.QIndex + 1 == Game.QAmount)
         {
             Game.QResult = null;
@@ -164,8 +165,13 @@
         else
         {
             Game.QResult = null;
+            Game.ActiveQuestion = true;
             Game.QIndex++;
         }
+    }
+    private async Task HandleCountdownEnd()
+    {
+        await SendGuess("", quizInfo.Questions[Game.QIndex].Answer);
     }
 
     protected override async Task OnInitializedAsync()
