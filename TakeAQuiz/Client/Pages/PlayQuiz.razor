@@ -33,12 +33,20 @@
                 }
 
                 <MudContainer Class="d-flex justify-center flex-column">
-                    @if (Game.QResult == true)
+                    @if (Game.FinishedGame)
+                    {
+                        <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
+                            <MudText Typo="Typo.h4" Color="Color.Success">Game finished!</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary">Your score: @Game.CurrentScore</MudText>
+                            <MudButton OnClick="Game.ResetGame" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Replay</MudButton>
+                        </MudPaper>
+                    }
+                    else if (Game.QResult == true)
                     {
                         <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
                             <MudText Typo="Typo.h4" Color="Color.Success">Correct guess! :)</MudText>
                             <MudText Typo="Typo.h5" Color="Color.Primary">+100 points</MudText>
-                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Next Question</MudButton>
+                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Continue</MudButton>
                         </MudPaper>
                     }
                     else if (Game.QResult == false)
@@ -46,7 +54,7 @@
                         <MudPaper Class="d-flex flex-column justify-space-evenly align-center" Style="height: 40svh; width: 100%; text-align: center;">
                             <MudText Typo="Typo.h4" Color="Color.Error">Wrong guess! :(</MudText>
                             <MudText Typo="Typo.h5" Color="Color.Primary">-100 points</MudText>
-                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Next Question</MudButton>
+                            <MudButton OnClick="@NextQuestion" Variant="Variant.Outlined" Color="Color.Primary" Class="mr-4 pa-6" Style="width: 49%; font-size: 1.2rem;">Continue</MudButton>
                         </MudPaper>
                     }
                     else
@@ -137,28 +145,36 @@
 
     public async Task SendGuess(string guess, string answer)
     {
-        await game.MakeGuess(guess,answer,quizInfo.Title);
-        await InvokeAsync(StateHasChanged);
-
-        if (Game.QResult == null)
+        if (Game.QResult == null && Game.FinishedGame != true)
         {
-            await Game.MakeGuess(guess, answer);
+            await Game.MakeGuess(guess, answer, Title);
+            InputGuess = "";
             await InvokeAsync(StateHasChanged);
         }
     }
 
     public void NextQuestion()
     {
-        Game.QResult = null;
-        Game.QIndex++;
+        if (Game.QIndex + 1 == Game.QAmount)
+        {
+            Game.QResult = null;
+            Game.FinishedGame = true;
+            Game.EndGame(Title, Game.CurrentScore);
+        } 
+        else
+        {
+            Game.QResult = null;
+            Game.QIndex++;
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
         Game = new GameLogic(Http);
+
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
+
         Game.CurrentScore += quizInfo.MaxScore;
         Game.QAmount += quizInfo.Questions.Count();
-        // Game.StateChange += () => InvokeAsync(StateHasChanged);
     }
 }

@@ -1,9 +1,56 @@
 ﻿@page "/"
+@using TakeAQuiz.Shared.ViewModels
+@inject HttpClient Http;
 
-<PageTitle>Index</PageTitle>
+<MudGrid Class="pa-10 d-flex justify-center">
+    <MudItem xs="8">
+        <MudPaper Elevation="4" Class="pa-8 ma-4">
+            @if (userInfo != null)
+            {
+                <MudText Typo="Typo.h4">Welcome @(userInfo.UserName)!</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h4">Welcome stranger!</MudText>
+            }
 
-<h1>Hello, world!</h1>
+            <MudText Typo="Typo.h6">Explore, Play, Create and Learn!</MudText>
+            <MudText Typo="Typo.body1">Dive into the world of knowledge and fun with QuizHub, where you are not just a visitor, but a key player in the vast realm of quizzes. Here's what you can do:</MudText>
 
-Welcome to your new app.
+            <ol>
+                <li>
+                    <MudText Typo="Typo.h6">Explore Quizzes:</MudText>
+                    <MudText Typo="Typo.body1">Browse through an ever-expanding collection of quizzes created by fellow users.</MudText>
+                    <MudText Typo="Typo.body1">Challenge yourself with a diverse range of topics, from science and history to pop culture and more.</MudText>
+                </li>
+                <li>
+                    <MudText Typo="Typo.h6">Play & Learn:</MudText>
+                    <MudText Typo="Typo.body1">Engage in exciting quizzes crafted by the community.</MudText>
+                    <MudText Typo="Typo.body1">Test your knowledge, learn new facts, and enjoy the thrill of competition.</MudText>
+                </li>
+                <li>
+                    <MudText Typo="Typo.h6">Create Your Own Quiz:</MudText>
+                    <MudText Typo="Typo.body1">Unleash your creativity and share your knowledge with the world.</MudText>
+                    <MudText Typo="Typo.body1">Craft quizzes on topics you're passionate about, and let others enjoy your quiz-making prowess.</MudText>
+                </li>
+                <li>
+                    <MudText Typo="Typo.h6">Future Features:</MudText>
+                    <MudText Typo="Typo.body1">Stay tuned for upcoming features, including the ability to rate quizzes and sort them by user ratings.</MudText>
+                    <MudText Typo="Typo.body1">We're constantly evolving to make your experience richer and more enjoyable.</MudText>
+                </li>
+            </ol>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            <MudText Typo="Typo.body1">Join Take a Quiz today and embark on a journey of exploration, learning, and community engagement. Let the quizzes begin!</MudText>
+
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private UserViewModel? userInfo = new UserViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        userInfo = await Http.GetFromJsonAsync<UserViewModel>("api/profile/getuserdata/");
+    }
+}
