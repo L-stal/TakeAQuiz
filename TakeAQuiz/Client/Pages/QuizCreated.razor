@@ -1,0 +1,18 @@
+﻿@page "/quiz-created/{quizTitle}"
+
+<MudGrid Class="pa-10 d-flex justify-center">
+    <MudItem xs="8">
+        <MudPaper Elevation="4" Class="d-flex flex-column justify-center align-center pa-8 ma-4">
+            <MudText Typo="Typo.h4">@QuizTitle has been created!</MudText>
+            <div style="margin: 2rem">
+                <MudLink Class="py-2 px-4 mx-4 rounded" Style="@($"background:{Colors.Indigo.Darken4};")" Href="@($"/play-quiz/{QuizTitle}")">Play Quiz</MudLink>
+                <MudLink Class="py-2 px-4 mx-4 rounded" Style="@($"background:{Colors.Indigo.Darken4};")" Href="/view-quizzes">View Quizzes</MudLink>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public string QuizTitle { get; set; }
+}
