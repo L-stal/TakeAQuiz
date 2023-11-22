@@ -10,7 +10,6 @@
     [Parameter] public bool? QuestionResult { get; set; }
     private int timeRemaining;
     private CancellationTokenSource cancellationToken;
-
     protected override void OnInitialized()
     {
         cancellationToken?.Cancel();
@@ -37,15 +36,7 @@
             StateHasChanged();
         }
 
-        if (timeRemaining <= 0)
-        {
-            ResetCountdown();
-        }
-
-
-        StateHasChanged();
     }
-
     private void ResetCountdown()
     {
         ActiveQuestion = false;
@@ -54,6 +45,7 @@
 
     protected override void OnParametersSet()
     {
+
         if (ActiveQuestion == true)
         {
             cancellationToken?.Cancel();
