@@ -42,6 +42,7 @@
             ResetCountdown();
         }
 
+
         StateHasChanged();
     }
 
@@ -53,7 +54,7 @@
 
     protected override void OnParametersSet()
     {
-        if (QuestionIndex > 0)
+        if (ActiveQuestion == true)
         {
             cancellationToken?.Cancel();
             ResetCountdown();
