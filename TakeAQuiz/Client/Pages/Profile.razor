@@ -60,7 +60,8 @@
                 }
                 else
                 {
-                    <MudText Typo="Typo.h6">User information is not available or there are no quizzes.</MudText>
+                    <MudText Typo="Typo.h6">User information is not available or there are no quizzes.<br>Are you logged in?</MudText>
+                    <MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" Href="authentication/login">Log in</MudButton>
                 }
             </MudTabs>
         </MudPaper>
@@ -70,7 +71,8 @@
 @code {
     private UserViewModel? userInfo;
     private List<GameViewModel>? gameInfo;
-
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
     protected override async Task OnInitializedAsync()
     {
         var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;

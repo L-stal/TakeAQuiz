@@ -9,6 +9,8 @@
 <div class="ma-5 d-flex justify-center">
 	<h1>Create a Quiz!</h1>
 </div>
+<AuthorizeView>
+	<Authorized>
 <MudGrid Class="d-flex justify-center pa-3 ma-3">
 	<MudItem xs="12" sm="7" Class="pa-3">
 		<MudForm @ref="form" @bind-IsValid="@success">
@@ -79,7 +81,20 @@
 		</MudPaper>
 	</MudItem>
 </MudGrid>
-
+	</Authorized>
+	<NotAuthorized>
+		<MudGrid Class="pa-10 d-flex justify-center">
+			<MudItem xs="8">
+				<MudPaper Elevation="4" Class="d-flex flex-column justify-center align-center pa-8 ma-4">
+					<MudText Typo="Typo.h4">You need to log in to creat a Quiz!:)</MudText>
+					<div style="margin: 2rem">
+						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" Href="authentication/login">Log in</MudButton>
+					</div>
+				</MudPaper>
+			</MudItem>
+		</MudGrid>
+	</NotAuthorized>
+</AuthorizeView>
 
 @code {
 	bool success;
