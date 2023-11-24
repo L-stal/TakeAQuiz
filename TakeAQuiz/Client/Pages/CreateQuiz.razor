@@ -189,14 +189,12 @@
 
 			try
 			{
-				// Check if currentIndex is within the valid range of files
 				if (currentIndex >= 0 && currentIndex < files.Count)
 				{
 					currentQuestion.Media = files[currentIndex].NewFileName;
 				}
 				else
 				{
-					// Handle the situation when currentIndex is out of range, for example, add a new element to the collection
 					files.Add(fileDto);
 					currentQuestion.Media = uniqueFileName;
 				}

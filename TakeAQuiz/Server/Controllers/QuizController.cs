@@ -150,8 +150,22 @@ namespace TakeAQuiz.Server.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest($"Error: {ex.Message}");
-			}
+                return BadRequest($"Error: {ex.Message}");
+            }
 		}
-	}
+
+        [HttpGet("getmedia")]
+        public IActionResult GetMedia(string fileName)
+        {
+            var path = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads", fileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                var fileBytes = System.IO.File.ReadAllBytes(path);
+                return File(fileBytes, "application/octet-stream");
+            }
+
+            return NotFound();
+        }
+    }
 }
