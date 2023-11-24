@@ -227,7 +227,7 @@
 
 		using (var ms = new MemoryStream())
 		{
-			await file.OpenReadStream(maxSize).CopyToAsync(ms);
+			await  file.OpenReadStream(maxSize).CopyToAsync(ms);
 			return ms.ToArray();
 		}
 	}
