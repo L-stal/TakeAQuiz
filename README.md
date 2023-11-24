@@ -26,7 +26,90 @@ These planned updates aim to enhance the user experience, engagement, and overal
 
 ## Code
 
+### Files uploaded by user logic
+
+When a user loads a media file during the creation of a quiz the method below will be run on change. It handles the logical steps in ensuring that the file is saved to list without any issues. Issues such as the file exceeding the size limit and also making sure that the file is prepared for being transfered to the server side by running a convertion method.
+
+```
+private async Task LoadFileAsync(InputFileChangeEventArgs e, int currentIndex)
+{
+    file = e.File;
+
+    if (file != null)
+    {
+        if (file.Size > maxFileSize)
+        {
+            errors.Add($"Error: File size exceeds the limit of {maxFileSize / (1024 * 1024)} MB");
+            return;
+        }
+
+        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+
+        var fileView = new FileUploadViewModel
+        {
+            NewFileName = uniqueFileName,
+            FileBytes = await ConvertFileToByteArray(file,maxFileSize)
+        };
+
+        try
+        {
+            if (currentIndex >= 0 && currentIndex < files.Count)
+            {
+                currentQuestion.Media = files[currentIndex].NewFileName;
+            }
+            else
+            {
+                files.Add(fileView);
+                currentQuestion.Media = uniqueFileName;
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Error: {ex.Message}");
+        }
+    }
+}
+```
+
+### Convert file to bytes method
+
+This is the method which is run on each file uploaded by the user. The file will be converted to an array of bytes which will be saved on the RAM for the duration of its use. The duration it will be saved is until the quiz has been aborted or submitted to the database and the files themselves have been transfered to a folder on the server-side.
+
+```
+private async Task<byte[]> ConvertFileToByteArray(IBrowserFile file, long maxSize)
+{
+
+    using (var ms = new MemoryStream())
+    {
+        await file.OpenReadStream(maxSize).CopyToAsync(ms);
+        return ms.ToArray();
+    }
+}
+```
+
 ## Reflections
+
+### Design
+
+We decided to use MudBlazor for styling which is a component library specifically suited for Blazor. It saved us a lot of time by using ready made components for all of the different front-end specific functionality. The time which was saved we used for learning more in-depth about Blazor WebAssembly and adding more features to the application.
+
+Since the project had a time-frame of 4 weeks until completion we decided to use MudBlazor. But if it was the right decision is questionable, our inexperience of using the library caused issues which never would have happened if we were to use traditional CSS or Bootstrap. The advantage of using MudBlazor was that we were able to connect the backend logic with the frontend functionality in a very short time.
+
+We have prioritized the functionality in our application and therefor the design of the layout is lacking a unique style.
+
+### Performance
+
+Currently we are not using any sort of logic to store data in the cache storage or in cookies. If we were to add some sort of momentary storage then that would save us additional loadtimes which are caused by multiple API calls.
+
+Our entire application is dependant on API calls made for gathering all of our data from our database. No data is saved for later use except for the login details.
+
+The application as a whole is working well. We have implemented a functionality which allows the user to upload media files which are transfered suprisingly fast to a folder on the server. This is made by momentarily converting the files into bytes of data for the duration of the transfer from client to server. Thereafter it is converted back into the original format once it has reached the server.
+
+This is good for the moment but if we were to publish this project into a production environment with its own domain and such, then we would have to implement another method since the traffic will affect this type of file transfer. The loading time will be longer since the memory of RAM sticks will be exceeded.
+
+### Scalability
+
+We have setup a good foundation of our project which increases the possibility for scaling of the application. API endpoints, major functionality and other parts are made with separation of concern in mind during development. This makes it easier to navigate and also add functionality to already developed code.
 
 ## Tools
 
