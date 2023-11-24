@@ -3,6 +3,7 @@
 @using TakeAQuiz.Shared.GameLogic;
 @inject HttpClient Http;
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudGrid Class="pa-10 d-flex justify-center">
     <MudItem xs="8">
@@ -64,8 +65,8 @@
                              quizInfo.Questions[Game.QIndex].Media.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
                              quizInfo.Questions[Game.QIndex].Media.EndsWith(".webm", StringComparison.OrdinalIgnoreCase))
                         {
-                            <video style="height: 40vh; width: 100%;" controls>
-                                <source src="@($"{baseUrl}/api/quiz/getmedia?fileName={quizInfo.Questions[Game.QIndex].Media}")" type="video/mp4">
+                            <video style="height: 40vh; width: 100%;" controls autoplay onloadstart="this.volume=0.5"
+                                src="@($"{baseUrl}api/quiz/getmedia?fileName={quizInfo.Questions[Game.QIndex].Media}")">
                                 Your browser does not support the video tag.
                             </video>
                         }
@@ -183,9 +184,7 @@
     {
         baseUrl = NavigationManager.BaseUri;
         Game = new GameLogic(Http);
-
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
-
         Game.CurrentScore += quizInfo.MaxScore;
         Game.QAmount += quizInfo.Questions.Count();
     }
