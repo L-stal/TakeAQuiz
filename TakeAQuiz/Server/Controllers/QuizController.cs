@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Text;
+using System.IO.Enumeration;
+using System.Net;
 using System.Security.Claims;
 using TakeAQuiz.Server.Data;
 using TakeAQuiz.Server.Models;
@@ -16,11 +21,13 @@ namespace TakeAQuiz.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public QuizController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public QuizController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet("getallquizzes")]
@@ -82,7 +89,7 @@ namespace TakeAQuiz.Server.Controllers
         }
 
         [HttpPost("createquiz")]
-        public async Task<IActionResult> CreatQuiz([FromBody] QuizViewModel quiz)
+        public async Task<IActionResult> CreateQuiz([FromBody]QuizViewModel quiz)
         {
             var quizObject = new QuizModel
             {
@@ -124,5 +131,27 @@ namespace TakeAQuiz.Server.Controllers
             return Ok(new { Message = "Quiz created successfully!" });
         }
 
-    }
+		[HttpPost("transferfiles")]
+		public async Task<ActionResult<List<FileUploadViewModel>>> TransferFiles(List<FileUploadViewModel> files)
+		{
+			try
+			{
+				foreach (var file in files)
+				{
+					var path = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads", file.NewFileName);
+
+					using (FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+					{
+						await new MemoryStream(file.FileBytes).CopyToAsync(fileStream);
+					}
+				}
+
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest($"Error: {ex.Message}");
+			}
+		}
+	}
 }

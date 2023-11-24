@@ -13,7 +13,6 @@
 	<MudItem xs="12" sm="7" Class="pa-3">
 		<MudForm @ref="form" @bind-IsValid="@success">
 			<MudPaper Elevation="6" Class="pa-4">
-
 				<MudTextField T="string" Label="Title" @bind-Value=@quiz.Title Required="true" RequiredError="You need a Title on your Quiz!" />
 			</MudPaper>
 
@@ -22,16 +21,29 @@
 				var currentIndex = i;
 				var currentQuestion = questionSets[i];
 				<div class="border-2 mud-border-primary pa-4 ma-4">
-				<div class="d-flex justify-space-between align-center">
-					<h1>Question @(i + 1)</h1>
-					@if(currentIndex > 0)
-					{
-						<MudButton Variant="Variant.Filled"  StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteQuestion(currentIndex)"></MudButton>
-					}
+					<div class="d-flex justify-space-between align-center">
+						<h1>Question @(i + 1)</h1>
+						@if (currentIndex > 0)
+						{
+							<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteQuestion(currentIndex)"></MudButton>
+						}
 					</div>
+
 					<MudTextField T="string" Label="Question" Required="true" @bind-Value="currentQuestion.Question" RequiredError="A question is required" />
-					<MudTextField T="string" Label="Add a URL for your picture or video" Required="true" @bind-Value="currentQuestion.Media" RequiredError="Add a video or picture for your question" />
 					<MudTextField T="string" Label="Answer" Required="true" @bind-Value="currentQuestion.Answer" RequiredError="What is the answer?" />
+
+					@if (errors.Count > 0)
+					{
+						<h2>Errors</h2>
+						<ul class="text-danger">
+							@foreach (var error in errors)
+							{
+								<li>@error</li>
+							}
+						</ul>
+					}
+
+					<InputFile OnChange="(e) => LoadFileAsync(e, currentIndex)" accept=".png,.jpg,.jpeg,.mp4,.mov,.webm" />
 
 					@if (currentQuestion.MultiAnswer)
 					{
@@ -47,12 +59,12 @@
 					}
 					@if (currentQuestion.HasTimeLimit)
 					{
-						<MudRadioGroup  Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
+						<MudRadioGroup Class="mt-2" @bind-SelectedOption=@currentQuestion.TimeLimit>
 							<MudRadio Option="15" Color="Color.Primary">15s</MudRadio>
 							<MudRadio Option="30" Color="Color.Primary">30s</MudRadio>
 							<MudRadio Option="45" Color="Color.Primary">45s</MudRadio>
 						</MudRadioGroup>
-						<MudButton  Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>RemoveTimeLimit(currentIndex)">Remove Time Limit</MudButton>
+						<MudButton Class="mt-2 pa-2" Variant="Variant.Filled" Color="Color.Primary" @onclick="() =>RemoveTimeLimit(currentIndex)">Remove Time Limit</MudButton>
 					}
 					else
 					{
@@ -76,14 +88,15 @@
 	QuestionViewModel currentQuestion;
 	List<QuestionViewModel> questionSets = new List<QuestionViewModel>();
 	QuizViewModel quiz = new QuizViewModel();
+
 	//Creates divs for new questions and adds them to the list
 	public void NewQuestion()
 	{
 		// Reset the currentQuestion for the next question
 		currentQuestion = new QuestionViewModel();
 		questionSets.Add(currentQuestion);
-
 	}
+
 	private void AddMockAnswer(int i)
 	{
 		//Gets the question with the index value sen in from the form
@@ -94,11 +107,13 @@
 			question.MockAnswers.Add(new MockViewModel());
 		}
 	}
+
 	private void AddTimeLimit(int i)
 	{
 		var question = questionSets[i];
 		question.HasTimeLimit = true;
 	}
+
 	private async Task RemoveMockAnswers(int i)
 	{
 		var question = questionSets[i];
@@ -107,34 +122,98 @@
 		//Delay Magic!
 		await Task.Delay(1);
 	}
+
 	private void RemoveTimeLimit(int i)
 	{
 		var question = questionSets[i];
 		question.HasTimeLimit = false;
 		question.TimeLimit = 0;
 	}
+
 	private void DeleteQuestion(int i)
 	{
 		questionSets.RemoveAt(i);
 
 	}
+
 	//Check if form is valid, then sends in data to controller
 	private async Task CreateQuizAsync()
 	{
-		quiz.Questions = questionSets;
-
-		await form.Validate();
-
-		if (form.IsValid && quiz.Questions.Count > 0)
+		try
 		{
-			var response = await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+			quiz.Questions = questionSets;
+			await form.Validate();
 
-			if (response.IsSuccessStatusCode)
+			if (form.IsValid && quiz.Questions.Count > 0)
 			{
-				NavigationManager.NavigateTo($"/quiz-created/{quiz.Title}");
+				var response = await _http.PostAsJsonAsync("api/quiz/createquiz", quiz);
+				var response2 = await _http.PostAsJsonAsync("api/quiz/transferfiles", files);
+
+				if (response.IsSuccessStatusCode && response2.IsSuccessStatusCode)
+				{
+					NavigationManager.NavigateTo($"/quiz-created/{quiz.Title}");
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			errors.Add($"Error: {ex.Message}");
+		}
+	}
+
+	// File logic
+	private long maxFileSize = 1024 * 1024 * 3; // 3MB
+	private List<string> errors = new();
+	private IBrowserFile? file;
+	private List<FileUploadViewModel> files = new List<FileUploadViewModel>();
+
+	private async Task LoadFileAsync(InputFileChangeEventArgs e, int currentIndex)
+	{
+		file = e.File;
+
+		if (file != null)
+		{
+			if (file.Size > maxFileSize)
+			{
+				errors.Add($"Error: File size exceeds the limit of {maxFileSize / (1024 * 1024)} MB");
+				return;
+			}
+
+			var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.Name);
+
+			var fileDto = new FileUploadViewModel
+				{
+					NewFileName = uniqueFileName,
+					FileBytes = await ConvertFileToByteArray(file)
+				};
+
+			try
+			{
+				// Check if currentIndex is within the valid range of files
+				if (currentIndex >= 0 && currentIndex < files.Count)
+				{
+					currentQuestion.Media = files[currentIndex].NewFileName;
+				}
+				else
+				{
+					// Handle the situation when currentIndex is out of range, for example, add a new element to the collection
+					files.Add(fileDto);
+					currentQuestion.Media = uniqueFileName;
+				}
+			}
+			catch (Exception ex)
+			{
+				errors.Add($"Error: {ex.Message}");
 			}
 		}
 	}
+
+	private async Task<byte[]> ConvertFileToByteArray(IBrowserFile file)
+	{
+		using (var ms = new MemoryStream())
+		{
+			await file.OpenReadStream().CopyToAsync(ms);
+			return ms.ToArray();
+		}
+	}
 }
-
-
