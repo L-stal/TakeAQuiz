@@ -2,6 +2,7 @@
 @using TakeAQuiz.Shared.ViewModels;
 @using TakeAQuiz.Shared.GameLogic;
 @inject HttpClient Http;
+@inject NavigationManager NavigationManager
 
 <MudGrid Class="pa-10 d-flex justify-center">
     <MudItem xs="8">
@@ -59,15 +60,18 @@
                     }
                     else
                     {
-                        @if (quizInfo.Questions[Game.QIndex].Media.Contains("youtube"))
+                        @if (quizInfo.Questions[Game.QIndex].Media.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+                             quizInfo.Questions[Game.QIndex].Media.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
+                             quizInfo.Questions[Game.QIndex].Media.EndsWith(".webm", StringComparison.OrdinalIgnoreCase))
                         {
-                            <iframe style="height: 40svh; width: 100%;" src="@($"{quizInfo.Questions[Game.QIndex].Media}&autoplay=1&showinfo=0&player.setVolume(5)")" title="Video" frameborder="0"
-                                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture">
-                            </iframe>
+                            <video style="height: 40vh; width: 100%;" controls>
+                                <source src="@($"{baseUrl}/api/quiz/getmedia?fileName={quizInfo.Questions[Game.QIndex].Media}")" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
                         }
                         else
                         {
-                            <MudImage Style="height: 40svh; width: 100%; object-fit: cover;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@quizInfo.Questions[Game.QIndex].Media" Alt="Media" />
+                            <MudImage Style="height: 40vh; width: 100%; object-fit: cover;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@($"/api/quiz/getmedia?fileName={quizInfo.Questions[Game.QIndex].Media}")" Alt="Media" />
                         }
                     }
 
@@ -142,6 +146,7 @@
     private GameLogic Game;
     private QuizViewModel? quizInfo = new QuizViewModel();
     private string? InputGuess { get; set; }
+    private string baseUrl;
 
     public async Task SendGuess(string guess, string answer)
     {
@@ -176,6 +181,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        baseUrl = NavigationManager.BaseUri;
         Game = new GameLogic(Http);
 
         quizInfo = await Http.GetFromJsonAsync<QuizViewModel>("api/quiz/getquiz/" + @Title);
